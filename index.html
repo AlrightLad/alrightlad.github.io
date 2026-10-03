@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zach Boogher — I turn the annoying parts into buttons</title>
+<meta name="description" content="Infrastructure engineer. I build automation for a managed IT fleet of several thousand machines, and the interfaces people use to run it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2F4EF;--paper-2:#E8EBE3;--panel:#FFFFFF;
+  --ink:#1B2420;--ink-soft:#5E6B62;
+  --fairway:#3F6B47;--fairway-lite:#7FB184;
+  --sand:#C9B48A;--flag:#BE4238;--rule:#D5DACF;
+  --maxw:70rem;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#121710;--paper-2:#1A1F18;--panel:#191E17;--ink:#E7EBE2;--ink-soft:#98A493;
+  --fairway:#86B98B;--fairway-lite:#A9D0AC;--sand:#CDB88E;--flag:#E8867A;--rule:#2C332A;}}
+:root[data-theme="dark"]{
+  --paper:#121710;--paper-2:#1A1F18;--panel:#191E17;--ink:#E7EBE2;--ink-soft:#98A493;
+  --fairway:#86B98B;--fairway-lite:#A9D0AC;--sand:#CDB88E;--flag:#E8867A;--rule:#2C332A;}
+
+html{height:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+body{margin:0;background:var(--paper);color:var(--ink);overflow-x:hidden;
+  font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;font-size:1.0625rem;line-height:1.65;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 1.6rem}
+@media (max-width:40rem){.wrap{padding:0 1.15rem}}
+h1,h2,h3,h4{font-family:Fraunces,Georgia,serif;font-weight:600;line-height:1.07;margin:0;letter-spacing:-.02em}
+h2{font-size:clamp(1.9rem,4vw,2.9rem)}h3{font-size:1.25rem}
+p{margin:0 0 1.05rem;max-width:37rem}
+.soft{color:var(--ink-soft)}
+a{color:inherit;text-decoration:none;border-bottom:1px solid var(--fairway);padding-bottom:1px;transition:color .18s}
+a:hover{color:var(--fairway)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--fairway);outline-offset:3px;border-radius:2px}
+code{font-family:"IBM Plex Mono",monospace;font-size:.86em;background:var(--paper-2);padding:.12em .36em;border-radius:3px}
+
+/* ===== entrance ===== */
+#curtain{position:fixed;inset:0;z-index:999;background:var(--paper);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1.2rem}
+#curtain.gone{animation:lift .7s cubic-bezier(.65,0,.35,1) forwards}
+@keyframes lift{to{opacity:0;visibility:hidden;transform:translateY(-1.5rem)}}
+.c-name{font-family:Fraunces,serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:600;
+  letter-spacing:-.03em;opacity:0;animation:cin .6s .1s forwards}
+.c-sub{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--ink-soft);
+  opacity:0;animation:cin .6s .34s forwards}
+@keyframes cin{to{opacity:1}}
+.ball{position:absolute;right:-5px;top:-3px;width:8px;height:8px;border-radius:50%;
+  background:var(--ink);opacity:0;animation:ballin .5s .95s forwards}
+@keyframes ballin{to{opacity:1}}
+.c-line{position:relative;width:0;height:2px;background:var(--fairway);animation:grow .85s .2s cubic-bezier(.65,0,.35,1) forwards}
+@keyframes grow{to{width:8rem}}
+
+/* ===== nav ===== */
+.progress{position:fixed;top:0;left:0;height:2px;width:0;background:var(--fairway);z-index:90;
+  transition:width .08s linear;pointer-events:none}
+.bar{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--paper) 90%,transparent);
+  backdrop-filter:blur(12px);border-bottom:1px solid var(--rule);padding-top:env(safe-area-inset-top,0px)}
+.bar-in{max-width:var(--maxw);margin:0 auto;padding:.9rem 1.6rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+@media (max-width:40rem){.bar-in{padding:.8rem 1.15rem}}
+.logo{font-family:Fraunces,serif;font-size:1.05rem;font-weight:600;border:0;letter-spacing:-.02em;white-space:nowrap}
+.logo span{color:var(--fairway)}
+.nav{display:flex;gap:.25rem;align-items:center}
+.nav a{font-size:.9rem;color:var(--ink-soft);border:0;padding:.35rem .7rem;border-radius:3px;position:relative;transition:color .18s,background .18s}
+.nav a:hover{color:var(--ink);background:var(--paper-2)}
+.nav a.on{color:var(--fairway)}
+.nav a.on::after{content:"";position:absolute;left:.7rem;right:.7rem;bottom:.1rem;height:2px;background:var(--fairway);animation:uw .3s cubic-bezier(.2,.8,.3,1)}
+@keyframes uw{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.navsep{width:1px;height:1.1rem;background:var(--rule);margin:0 .4rem}
+.ic{display:inline-flex;align-items:center;justify-content:center;width:1.85rem;height:1.85rem;
+  color:var(--ink-soft);border:1px solid var(--rule);border-radius:4px;transition:all .18s}
+.ic svg{width:.95rem;height:.95rem}
+.ic:hover{color:var(--paper);background:var(--fairway);border-color:var(--fairway)}
+.hire{font-family:inherit;font-size:.82rem;font-weight:500;color:var(--paper);background:var(--fairway);
+  border:1px solid var(--fairway);border-radius:3px;padding:.34rem .75rem;margin-left:.4rem;cursor:pointer;transition:opacity .18s}
+.hire:hover{opacity:.85;color:var(--paper)}
+@media (max-width:62rem){.navsep,.ic{display:none}}
+@media (max-width:40rem){.hire{display:none}}
+.tbtn{margin-left:.4rem;background:none;border:1px solid var(--rule);color:var(--ink-soft);
+  font-family:"IBM Plex Mono",monospace;font-size:.7rem;padding:.3rem .5rem;border-radius:3px;cursor:pointer}
+.tbtn:hover{color:var(--fairway);border-color:var(--fairway)}
+@media (max-width:48rem){.nav a{font-size:.78rem;padding:.3rem .42rem}.nav a.on::after{left:.42rem;right:.42rem}}
+
+/* ===== pages ===== */
+.page{display:none}
+.page.live{display:block}
+.page.live>*{animation:rise .42s cubic-bezier(.2,.75,.3,1) backwards}
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s cubic-bezier(.2,.8,.3,1),transform .6s cubic-bezier(.2,.8,.3,1)}
+.reveal.seen{opacity:1;transform:none}
+.page.live>*:nth-child(2){animation-delay:.06s}
+.page.live>*:nth-child(3){animation-delay:.12s}
+.page.live>*:nth-child(4){animation-delay:.18s}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+section{padding:4rem 0;border-top:1px solid var(--rule)}
+section:first-of-type{border-top:0}
+.sec-head{max-width:40rem;margin-bottom:2.2rem}
+.sec-head p{margin-top:.7rem;color:var(--ink-soft)}
+
+.status{display:inline-flex;align-items:center;gap:.6rem;margin-top:2rem;padding:.4rem .85rem;
+  border:1px solid var(--rule);border-radius:99px;font-size:.82rem;color:var(--ink-soft);background:var(--panel)}
+.status .dot{width:7px;height:7px;border-radius:50%;background:var(--fairway);
+  box-shadow:0 0 0 0 color-mix(in srgb,var(--fairway) 60%,transparent);animation:pulse 2.4s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 7px transparent}100%{box-shadow:0 0 0 0 transparent}}
+
+/* ===== hero ===== */
+.hero{padding:4.5rem 0 3.5rem;border:0;position:relative}
+#fleet{position:absolute;top:-2rem;right:-12rem;width:46rem;height:30rem;z-index:-1;
+  opacity:.9;pointer-events:none;
+  mask-image:radial-gradient(ellipse at 62% 45%,#000 20%,transparent 72%);
+  -webkit-mask-image:radial-gradient(ellipse at 62% 45%,#000 20%,transparent 72%)}
+@media (max-width:64rem){#fleet{opacity:.42;right:-20rem}}
+@media (max-width:40rem){#fleet{display:none}}
+.fleet-cap{position:absolute;right:.5rem;bottom:-.5rem;font-family:"IBM Plex Mono",monospace;
+  font-size:.66rem;color:var(--ink-soft);opacity:.75}
+.ask{font-size:clamp(2.3rem,6.4vw,4.6rem);line-height:1.02;max-width:19ch;margin:0 0 1.6rem}
+.ask .w{display:inline-block;opacity:0;animation:wordin .55s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes wordin{from{opacity:0;transform:translateY(.5em) rotate(1.5deg)}to{opacity:1;transform:none}}
+.ask em{font-style:normal;color:var(--fairway);position:relative}
+.ask em::after{content:"";position:absolute;left:-.04em;right:-.04em;bottom:.08em;height:.16em;
+  background:var(--sand);opacity:.6;z-index:-1;transform-origin:left;transform:scaleX(0);
+  animation:swipe .5s 1.1s cubic-bezier(.65,0,.35,1) forwards}
+@keyframes swipe{to{transform:scaleX(1)}}
+.hero .lede{font-size:1.16rem;color:var(--ink-soft);max-width:34rem}
+.hero .lede b{color:var(--ink);font-weight:600}
+
+.numbers{display:grid;grid-template-columns:repeat(4,1fr);margin:3rem 0 0;
+  border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+@media (max-width:46rem){.numbers{grid-template-columns:repeat(2,1fr)}}
+.num{padding:1.4rem 1.1rem 1.4rem 0}
+.num b{display:block;font-family:Fraunces,serif;font-size:clamp(1.9rem,4vw,2.6rem);font-weight:600;
+  line-height:1;color:var(--fairway);letter-spacing:-.03em}
+.num span{display:block;margin-top:.35rem;font-size:.83rem;color:var(--ink-soft);line-height:1.4}
+.pull{margin:3.5rem 0 0;padding:2rem 0 0;border-top:1px solid var(--rule)}
+.pull p{font-family:Fraunces,serif;font-size:clamp(1.3rem,2.7vw,1.75rem);line-height:1.38;max-width:30ch;font-weight:400}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:start}
+@media (max-width:50rem){.split{grid-template-columns:1fr;gap:2rem}}
+.split-l h2{margin-bottom:.9rem}
+.bal-row{display:grid;grid-template-columns:1fr 9rem;gap:1rem;align-items:center;margin-bottom:.85rem;font-size:.9rem}
+@media (max-width:30rem){.bal-row{grid-template-columns:1fr 6rem}}
+.bal-track{height:7px;background:var(--paper-2);border-radius:4px;overflow:hidden}
+.bal-fill{display:block;height:100%;width:0;background:var(--fairway);transition:width 1s cubic-bezier(.2,.8,.3,1)}
+.bal-note{margin-top:1.3rem;font-size:.86rem;color:var(--ink-soft);font-style:italic}
+.cta-band{text-align:center;background:var(--panel);margin:0 -1.6rem;padding:4rem 1.6rem}
+.cta-band p{max-width:38rem;margin-left:auto;margin-right:auto}
+.bigbtn{display:inline-block;font-size:.95rem;font-weight:500;background:var(--fairway);color:var(--paper);
+  border:1px solid var(--fairway);border-radius:4px;padding:.65rem 1.5rem;margin:0 .3rem .5rem;transition:opacity .18s}
+.bigbtn:hover{opacity:.86;color:var(--paper)}
+.ghostbtn{background:none;color:var(--fairway);border-color:var(--rule)}
+.ghostbtn:hover{border-color:var(--fairway);color:var(--fairway)}
+
+.chartbox{border:1px solid var(--rule);background:var(--panel)}
+.chart-top{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;
+  padding:.9rem 1.1rem;border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.chart-big{font-family:Fraunces,serif;font-size:1.9rem;font-weight:600;color:var(--fairway);line-height:1}
+.chart-wrap{padding:1.1rem 1.1rem .4rem}
+#areaChart{width:100%;height:14rem;display:block;overflow:visible}
+.chart-x{display:flex;justify-content:space-between;padding:0 1.1rem 1rem;
+  font-family:"IBM Plex Mono",monospace;font-size:.66rem;color:var(--ink-soft)}
+.tri{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--rule);border-top:0;background:var(--panel)}
+@media (max-width:48rem){.tri{grid-template-columns:1fr}}
+.tri-c{padding:1.5rem 1.4rem;border-right:1px solid var(--rule)}
+.tri-c:last-child{border-right:0}
+.tri-c b{display:block;font-family:Fraunces,serif;font-size:2.1rem;font-weight:600;line-height:1;color:var(--fairway)}
+.tri-c span{display:block;margin:.4rem 0 .6rem;font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--ink-soft)}
+.tri-c p{font-size:.9rem;color:var(--ink-soft);margin:0}
+.donuts{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem}
+.donut{text-align:center}
+.donut svg{width:100%;max-width:8.5rem;height:auto}
+.donut .dl{display:block;margin-top:.5rem;font-size:.82rem;color:var(--ink-soft)}
+/* ===== grids / cards ===== */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));border:1px solid var(--rule);background:var(--panel)}
+.cell{padding:1.5rem 1.4rem;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.cell:last-child{border-right:0}
+.cell h3{margin-bottom:.45rem;font-size:1.1rem}
+.cell p{font-size:.93rem;color:var(--ink-soft);margin:0}
+.port{display:grid;gap:1.3rem;grid-template-columns:repeat(auto-fit,minmax(19rem,1fr))}
+.pcard{border:1px solid var(--rule);background:var(--panel);padding:1.6rem;display:flex;flex-direction:column;
+  transition:border-color .2s,transform .2s}
+.pcard:hover{border-color:var(--fairway);transform:translateY(-3px)}
+.pcard .tags{font-family:"IBM Plex Mono",monospace;font-size:.69rem;color:var(--fairway);margin-bottom:.65rem}
+.pcard h3{margin-bottom:.5rem}
+.pcard p{font-size:.92rem;color:var(--ink-soft);margin:0 0 1.1rem;flex:1}
+.pcard .go{font-size:.87rem;align-self:flex-start}
+
+.toggle{display:inline-flex;border:1px solid var(--rule);border-radius:99px;padding:3px;margin-top:1.4rem;background:var(--panel)}
+.tg{font-family:inherit;font-size:.82rem;border:0;background:none;color:var(--ink-soft);
+  padding:.35rem .95rem;border-radius:99px;cursor:pointer;transition:background .2s,color .2s}
+.tg.on{background:var(--fairway);color:var(--paper)}
+
+.sprint{display:grid;grid-template-columns:11rem 1fr;gap:2.5rem;border:1px solid var(--rule);
+  background:var(--panel);padding:2rem}
+@media (max-width:48rem){.sprint{grid-template-columns:1fr;gap:1.2rem;padding:1.5rem}}
+.sprint-l{border-right:1px solid var(--rule);padding-right:2rem}
+@media (max-width:48rem){.sprint-l{border-right:0;border-bottom:1px solid var(--rule);padding:0 0 1.1rem}}
+.sprint-num{font-family:Fraunces,serif;font-size:clamp(3.5rem,9vw,5.5rem);font-weight:700;line-height:.85;
+  color:var(--fairway);letter-spacing:-.05em}
+.sprint-lab{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-soft);margin-top:.5rem;line-height:1.5}
+.sprint-r h3{font-size:1.25rem;margin-bottom:.7rem}
+.sprint-r p{font-size:.97rem;color:var(--ink-soft)}
+.sprint-note{margin-top:1.1rem;padding-top:1.1rem;border-top:1px solid var(--rule);
+  font-style:italic;color:var(--ink)!important;font-size:.93rem!important}
+
+/* ===== process spine ===== */
+.spine{border-left:2px solid var(--rule);padding-left:0;margin-left:.4rem}
+.stepx{position:relative;padding:0 0 2.2rem 2rem}
+.stepx::before{content:"";position:absolute;left:-7px;top:.45rem;width:12px;height:12px;border-radius:50%;
+  background:var(--paper);border:2px solid var(--fairway)}
+.stepx:last-child{padding-bottom:0}
+.stepx h3{font-size:1.1rem;margin-bottom:.4rem}
+.stepx p{font-size:.95rem;color:var(--ink-soft);margin:0}
+
+/* ===== efficiency grade ===== */
+.eff{display:flex;align-items:center;gap:1.1rem;padding:1rem 1.1rem;border:1px solid var(--rule);
+  background:var(--panel);flex-wrap:wrap}
+.eff-badge{font-family:Fraunces,serif;font-size:2rem;font-weight:700;line-height:1;color:var(--fairway);
+  border:2px solid var(--fairway);border-radius:4px;padding:.4rem .7rem;letter-spacing:-.04em}
+.eff-bars{flex:1;min-width:14rem}
+.ebar{display:grid;grid-template-columns:7rem 1fr 3rem;gap:.7rem;align-items:center;margin-bottom:.4rem;
+  font-family:"IBM Plex Mono",monospace;font-size:.7rem;color:var(--ink-soft)}
+.ebar .track{height:6px;background:var(--paper-2);border-radius:3px;overflow:hidden}
+.ebar .fill{height:100%;background:var(--fairway);width:0;transition:width .9s cubic-bezier(.2,.8,.3,1)}
+.eff-note{font-size:.84rem;color:var(--ink-soft);width:100%;margin:0}
+
+/* ===== simulator ===== */
+.sim{border:1px solid var(--rule);background:var(--panel)}
+.sim-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.85rem 1.1rem;
+  border-bottom:1px solid var(--rule);flex-wrap:wrap}
+.sim-title{font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--ink-soft)}
+.sim-title b{color:var(--ink);font-weight:600}
+.btn{font-family:"IBM Plex Sans",sans-serif;font-size:.86rem;font-weight:500;background:var(--fairway);
+  color:var(--paper);border:1px solid var(--fairway);padding:.42rem 1rem;border-radius:3px;cursor:pointer;transition:opacity .15s}
+.btn:hover{opacity:.86}
+.btn[disabled]{opacity:.45;cursor:default}
+.btn.ghost{background:none;color:var(--ink-soft);border-color:var(--rule)}
+.btn.ghost:hover{color:var(--fairway);border-color:var(--fairway)}
+.sim-body{display:grid;grid-template-columns:1fr 19rem}
+@media (max-width:58rem){.sim-body{grid-template-columns:1fr}}
+.field{padding:1.1rem;display:flex;flex-wrap:wrap;gap:3px;align-content:flex-start;min-height:13rem}
+.node{width:11px;height:11px;border-radius:2px;background:var(--rule);transition:background .25s,transform .22s}
+.node.chk{background:var(--sand);transform:scale(1.4)}
+.node.up{background:var(--fairway-lite)}
+.node.ok{background:var(--fairway)}
+.node.blk{background:var(--flag)}
+@media (max-width:40rem){.node{width:9px;height:9px}}
+.log{border-left:1px solid var(--rule);padding:1.1rem;font-family:"IBM Plex Mono",monospace;font-size:.72rem;
+  line-height:1.8;color:var(--ink-soft);height:17rem;overflow-y:auto}
+@media (max-width:58rem){.log{border-left:0;border-top:1px solid var(--rule);height:10rem}}
+.log .g{color:var(--fairway)}.log .r{color:var(--flag)}.log .s{color:var(--sand)}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--rule)}
+.stat{padding:.8rem 1.1rem;border-right:1px solid var(--rule)}
+.stat:last-child{border-right:0}
+.stat b{display:block;font-family:Fraunces,serif;font-size:1.45rem;font-weight:600;line-height:1}
+.stat span{font-family:"IBM Plex Mono",monospace;font-size:.66rem;color:var(--ink-soft)}
+.sim-foot{padding:.8rem 1.1rem;border-top:1px solid var(--rule);font-size:.86rem;color:var(--ink-soft)}
+
+/* ===== queue ===== */
+.queue{border:1px solid var(--rule);background:var(--panel);max-width:44rem}
+.q-top{padding:.85rem 1.1rem;border-bottom:1px solid var(--rule);font-family:"IBM Plex Mono",monospace;font-size:.76rem;color:var(--ink-soft)}
+.q-row{display:flex;align-items:center;gap:1rem;padding:.72rem 1.1rem;border-bottom:1px solid var(--rule)}
+.q-name{flex:1;font-size:.95rem}
+.q-state{font-family:"IBM Plex Mono",monospace;font-size:.71rem;padding:.18rem .5rem;border-radius:2px;
+  background:var(--paper-2);color:var(--ink-soft);transition:background .25s,color .25s}
+.q-state.on{background:var(--fairway);color:var(--paper)}
+.q-ring{font-size:1.1rem;opacity:0;transition:opacity .3s}
+.q-ring.show{opacity:1;animation:shake .5s ease-in-out 2}
+@keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg)}75%{transform:rotate(12deg)}}
+.q-ctl{padding:.9rem 1.1rem;border-top:1px solid var(--rule);display:flex;gap:.55rem;flex-wrap:wrap}
+.q-msg{padding:.9rem 1.1rem;border-top:1px solid var(--rule);font-size:.89rem;min-height:4rem}
+.q-msg.bad{color:var(--flag)}.q-msg.good{color:var(--fairway)}
+
+/* ===== assessment demo ===== */
+.assess{border:1px solid var(--rule);background:var(--panel)}
+.as-ctl{padding:1.1rem;border-bottom:1px solid var(--rule);display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+.as-ctl label{font-family:"IBM Plex Mono",monospace;font-size:.74rem;color:var(--ink-soft)}
+.as-ctl input[type=range]{flex:1;min-width:11rem;accent-color:var(--fairway)}
+.as-out{font-family:Fraunces,serif;font-size:1.3rem;font-weight:600;color:var(--fairway);min-width:3rem}
+.race{padding:1.3rem 1.1rem}
+.lane{margin-bottom:1.1rem}
+.lane:last-child{margin-bottom:0}
+.lane-top{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:.73rem;
+  color:var(--ink-soft);margin-bottom:.35rem}
+.lane-track{height:16px;background:var(--paper-2);border-radius:3px;overflow:hidden}
+.lane-fill{height:100%;width:0;transition:width .7s cubic-bezier(.2,.8,.3,1)}
+.lane-fill.manual{background:var(--flag)}
+.lane-fill.auto{background:var(--fairway)}
+.as-foot{padding:.9rem 1.1rem;border-top:1px solid var(--rule);font-size:.87rem;color:var(--ink-soft)}
+
+/* ===== blog ===== */
+.bgrid{display:grid;gap:1.3rem;grid-template-columns:repeat(auto-fit,minmax(20rem,1fr))}
+.bcard{border:1px solid var(--rule);background:var(--panel);padding:1.6rem;display:flex;flex-direction:column;
+  cursor:pointer;transition:border-color .2s,transform .2s;border-bottom-width:1px}
+.bcard:hover{border-color:var(--fairway);transform:translateY(-3px)}
+.bmeta{display:flex;gap:.8rem;font-family:"IBM Plex Mono",monospace;font-size:.68rem;margin-bottom:.7rem}
+.bmeta .cat{color:var(--fairway)}
+.bmeta .dt{color:var(--ink-soft)}
+.bcard h3{margin-bottom:.5rem;font-size:1.2rem}
+.bcard p{font-size:.93rem;color:var(--ink-soft);margin:0 0 1rem;flex:1}
+.bcard .rm{font-size:.85rem;color:var(--fairway);font-weight:500}
+.article{max-width:40rem}
+.article h2{margin-bottom:.8rem}
+.article .ameta{font-family:"IBM Plex Mono",monospace;font-size:.73rem;color:var(--ink-soft);margin-bottom:2rem}
+.article p{font-size:1.03rem}
+.article h3{margin:2rem 0 .7rem}
+.vid{position:relative;padding-bottom:56.25%;height:0;margin:1.8rem 0;border:1px solid var(--rule);background:var(--paper-2)}
+.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.fig{margin:1.8rem 0}
+.fig img{width:100%;height:auto;border:1px solid var(--rule);display:block}
+.fig figcaption{margin-top:.5rem;font-size:.82rem;color:var(--ink-soft);font-family:"IBM Plex Mono",monospace}
+.hasvid{color:var(--flag)}
+.back{font-family:"IBM Plex Mono",monospace;font-size:.76rem;border:0;color:var(--ink-soft);
+  background:none;cursor:pointer;padding:0;margin-bottom:1.6rem;display:inline-block}
+.back:hover{color:var(--fairway)}
+
+/* ===== soon ===== */
+.soon{border:1px dashed var(--rule);background:var(--panel);padding:2.2rem;text-align:left}
+.soon-tag{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--sand);margin-bottom:.8rem}
+.roadmap{margin-top:2rem;border-top:1px solid var(--rule)}
+.rmi{display:grid;grid-template-columns:1.5rem 1fr;gap:1rem;padding:1.1rem 0;border-bottom:1px solid var(--rule)}
+.rmi-dot{width:9px;height:9px;border-radius:50%;background:var(--sand);margin-top:.5rem}
+.rmi h3{font-size:1.02rem;margin-bottom:.3rem}
+.rmi p{font-size:.92rem;color:var(--ink-soft);margin:0}
+
+/* ===== sub ===== */
+.sub{border:1px solid var(--rule);background:var(--panel);padding:2.2rem;max-width:40rem}
+.sub form{display:flex;gap:.6rem;margin-top:1.2rem;flex-wrap:wrap}
+.sub input{flex:1;min-width:13rem;font-family:inherit;font-size:.95rem;padding:.55rem .75rem;
+  background:var(--paper);border:1px solid var(--rule);color:var(--ink);border-radius:3px}
+.sub-note{margin-top:.9rem;font-size:.82rem;color:var(--ink-soft)}
+
+/* ===== about ===== */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:3rem}
+@media (max-width:46rem){.two{grid-template-columns:1fr;gap:1.4rem}}
+.trophy{border:1px solid var(--sand);background:var(--panel);padding:1.6rem 1.8rem;margin:2.2rem 0;max-width:37rem}
+.trophy .t-top{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--sand);margin-bottom:.5rem}
+.trophy h3{font-size:1.3rem;margin-bottom:.4rem}
+.trophy p{font-size:.95rem;color:var(--ink-soft);margin:0}
+
+.abt-hero{position:relative;padding:4.5rem 0 3rem;overflow:hidden}
+.abt-hero h2{font-size:clamp(2.4rem,6vw,4rem);margin-bottom:1.1rem}
+.abt-sub{font-size:1.14rem;color:var(--ink-soft);max-width:36rem}
+.topo{position:absolute;inset:0;z-index:-1;opacity:.38;pointer-events:none;
+  background-image:repeating-radial-gradient(circle at 82% 28%,transparent 0 26px,var(--rule) 26px 27px);
+  mask-image:linear-gradient(to left,#000,transparent 72%);
+  -webkit-mask-image:linear-gradient(to left,#000,transparent 72%)}
+.life{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:0;
+  border:1px solid var(--rule);background:var(--panel)}
+.lc{padding:1.5rem 1.4rem;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.lc:last-child{border-right:0}
+.le{display:block;width:1.6rem;height:1.6rem;margin-bottom:.75rem;color:var(--fairway)}
+.le svg{width:100%;height:100%;display:block}
+.lc h3{font-size:1.05rem;margin-bottom:.4rem}
+.lc p{font-size:.92rem;color:var(--ink-soft);margin:0}
+.tl{border-left:2px solid var(--rule);margin-left:.4rem}
+.tli{position:relative;display:grid;grid-template-columns:4.5rem 1fr;gap:1.2rem;padding:0 0 2rem 2rem}
+.tli::before{content:"";position:absolute;left:-7px;top:.4rem;width:12px;height:12px;border-radius:50%;
+  background:var(--paper);border:2px solid var(--fairway)}
+.tli:last-child{padding-bottom:0}
+.tly{font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--sand);padding-top:.35rem;white-space:nowrap}
+.co{display:block;font-family:"IBM Plex Sans",sans-serif;font-size:.78rem;font-weight:400;
+  color:var(--fairway);letter-spacing:0;margin-top:.15rem}
+.tli.now::before{background:var(--fairway)}
+.tli{grid-template-columns:5.5rem 1fr}
+.tli h3{font-size:1.05rem;margin-bottom:.3rem}
+.tli p{font-size:.93rem;color:var(--ink-soft);margin:0}
+@media (max-width:40rem){.tli{grid-template-columns:1fr;gap:.2rem}}
+
+.modal{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:1.2rem}
+.modal[hidden]{display:none}
+.modal-bg{position:absolute;inset:0;background:rgba(10,14,10,.62);backdrop-filter:blur(3px);animation:fadein .2s}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.modal-box{position:relative;background:var(--panel);border:1px solid var(--rule);border-radius:6px;
+  padding:2rem;width:100%;max-width:25rem;animation:boxin .28s cubic-bezier(.2,.8,.3,1)}
+@keyframes boxin{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.modal-x{position:absolute;top:.7rem;right:.9rem;background:none;border:0;font-size:1.5rem;line-height:1;
+  color:var(--ink-soft);cursor:pointer}
+.modal-x:hover{color:var(--fairway)}
+.modal-box h3{font-size:1.5rem;margin-bottom:.5rem}
+.cm-row{display:flex;align-items:center;gap:.9rem;padding:.75rem .85rem;border:1px solid var(--rule);
+  border-radius:4px;margin-bottom:.6rem;transition:border-color .18s,background .18s}
+.cm-row:hover{border-color:var(--fairway);background:var(--paper)}
+.cm-row:last-child{margin-bottom:0}
+.cm-ic{flex:0 0 2.1rem;height:2.1rem;display:flex;align-items:center;justify-content:center;
+  color:var(--fairway);border:1px solid var(--rule);border-radius:4px}
+.cm-ic svg{width:1.1rem;height:1.1rem}
+.cm-row b{display:block;font-size:.93rem;font-weight:600}
+.cm-row em{display:block;font-style:normal;font-size:.8rem;color:var(--ink-soft)}
+
+footer{padding:5rem 0 5rem;border-top:1px solid var(--rule)}
+.verse-block{max-width:34rem;margin:0 auto 4rem;text-align:center;position:relative}
+.verse-block::before,.verse-block::after{content:"";display:block;width:3rem;height:1px;
+  background:var(--rule);margin:0 auto}
+.verse-block::before{margin-bottom:2rem}
+.verse-block::after{margin-top:2rem}
+.foot-end{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;
+  padding-bottom:1.6rem;border-bottom:1px solid var(--rule)}
+.foot-name{font-family:"IBM Plex Mono",monospace;font-size:.78rem;color:var(--ink-soft)}
+.foot-contact{font-family:inherit;font-size:.88rem;background:none;border:1px solid var(--rule);
+  border-radius:3px;color:var(--ink);padding:.4rem 1rem;cursor:pointer;transition:all .18s}
+.foot-contact:hover{border-color:var(--fairway);color:var(--fairway)}
+.verse{font-family:Fraunces,serif;font-style:italic;font-size:clamp(1.15rem,2.4vw,1.5rem);
+  line-height:1.5;color:var(--ink);margin:0 0 .9rem;max-width:none}
+.vref{font-family:"IBM Plex Mono",monospace;font-size:.73rem;color:var(--fairway);letter-spacing:.04em}
+.colo{text-align:center}
+.fs{display:inline-flex;align-items:center;gap:.45rem;border-bottom-color:transparent}
+.fs:hover{border-bottom-color:var(--fairway)}
+.fs svg{width:1rem;height:1rem}
+.social{margin-top:2.4rem;display:flex;gap:1.4rem;flex-wrap:wrap;font-size:.95rem}
+.colo{margin-top:2.4rem;font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--ink-soft);line-height:1.9;max-width:42rem}
+</style>
+</head>
+<body>
+
+<div id="curtain">
+  <div class="c-name">Zach Boogher</div>
+  <div class="c-line"><span class="ball"></span></div>
+  <div class="c-sub">infrastructure automation · york, pa</div>
+</div>
+
+<div class="progress" id="progress" aria-hidden="true"></div>
+<div class="bar">
+  <div class="bar-in">
+    <a class="logo" href="#/">Zach Boogher<span>.</span></a>
+    <nav class="nav" id="nav">
+      <a href="#/">Home</a>
+      <a href="#/work">Work</a>
+      <a href="#/demos">Demos</a>
+      <a href="#/lab">Lab</a>
+      <a href="#/blog">Blog</a>
+      <a href="#/about">About</a>
+      <span class="navsep"></span>
+      <a class="ic" href="https://github.com/AlrightLad" title="GitHub" aria-label="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg></a>
+      <a class="ic" href="https://www.linkedin.com/in/zachb1303/" title="LinkedIn" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.5h4v11H3v-11Zm6.5 0h3.8v1.5h.05c.53-.95 1.83-1.95 3.77-1.95 4.03 0 4.78 2.5 4.78 5.76v5.69h-4v-5.05c0-1.2-.02-2.75-1.73-2.75-1.73 0-2 1.31-2 2.66v5.14h-4v-11Z"/></svg></a>
+      <a class="ic" href="https://www.instagram.com/alrightladdd/" title="Instagram" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+      <button class="hire" id="contactBtn" type="button">Contact me</button>
+      <button class="tbtn" id="themeBtn" type="button">theme</button>
+    </nav>
+  </div>
+</div>
+
+<main class="wrap">
+
+<!-- ========== HOME ========== -->
+<div class="page" data-route="/">
+  <div class="status">
+    <span class="dot"></span>
+    <span>Happy where I am — not looking for full time. Open to contract work.</span>
+  </div>
+  <header class="hero">
+    <canvas id="fleet" aria-hidden="true"></canvas>
+    <h1 class="ask" id="askLine"></h1>
+    <p class="lede">That's how I explain my job when someone asks, and it's the honest version. I'm Zach — I build the automation underneath a managed IT fleet, and <b>I love this work more than is strictly reasonable.</b> Finding the thing everyone has quietly accepted as "just how it is" and deleting it is the best part of my week.</p>
+    <p class="lede">A few thousand machines, a few hundred businesses. Almost everything I've written exists because somebody was doing it by hand several hundred times a week, and that somebody was usually me.</p>
+
+    <div class="numbers">
+      <div class="num"><b data-count="8350" data-suffix="+">0</b><span>endpoints under management</span></div>
+      <div class="num"><b data-count="425" data-suffix="+">0</b><span>client organizations</span></div>
+      <div class="num"><b data-count="265" data-suffix="+">0</b><span>appliances upgraded by one script</span></div>
+      <div class="num"><b data-count="1500" data-suffix="+">0</b><span>unattended scheduled runs</span></div>
+    </div>
+
+    <div class="pull">
+      <p>The automation isn't really about the automation. Every hour a computer takes back is an hour somebody spends on something they'd actually choose.</p>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head">
+      <h2>What I'm good at</h2>
+      <p>Infrastructure engineering is a wide net. Here's where mine lands.</p>
+    </div>
+    <div class="grid">
+      <div class="cell"><h3>Fleet automation</h3><p>PowerShell running unattended across thousands of endpoints, wired into ticketing, orchestrated on a schedule. It runs at 2am whether I'm awake or not, so it had better be right.</p></div>
+      <div class="cell"><h3>Windows infrastructure</h3><p>Hyper-V builds, Server 2016 through 2025 lifecycle, P2V migrations, Active Directory upgrade paths, provisioning from bare metal.</p></div>
+      <div class="cell"><h3>Backup and recovery</h3><p>Veeam design and fleet-wide upgrades. Nobody thinks about this until the one day it's the only thing in the building that matters.</p></div>
+      <div class="cell"><h3>Compliance engineering</h3><p>HIPAA and CMMC environments where the evidence trail matters as much as the fix. Auditors have never once accepted "trust me, I did it."</p></div>
+      <div class="cell"><h3>Documentation</h3><p>I own the internal knowledge base. An automation nobody else can operate is a liability wearing a clever disguise.</p></div>
+      <div class="cell"><h3>The interfaces</h3><p>Dashboards and tools people actually use to run all of it. Someone has to make the data legible, and I'd rather it be good. This site is a sample.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>The compounding part</h2>
+      <p>One script saves an afternoon. Thirty of them, running on a schedule across a fleet, stop being a convenience and start being capacity. Here's the shape of that, estimated conservatively.</p>
+    </div>
+
+    <div class="chartbox">
+      <div class="chart-top">
+        <span class="sim-title"><b>cumulative hours returned</b> — estimated, rounded</span>
+        <span class="chart-big" id="chartBig">0</span>
+      </div>
+      <div class="chart-wrap">
+        <svg id="areaChart" viewBox="0 0 760 240" preserveAspectRatio="none" aria-label="Cumulative hours returned over time"></svg>
+      </div>
+      <div class="chart-x" id="chartX"></div>
+      <div class="sim-foot">Each script is counted at the time it actually replaces, multiplied by how often it runs, from the month it went live. Estimates are rounded down. The curve bends because automation keeps working after you stop writing it.</div>
+    </div>
+
+    <div class="tri">
+      <div class="tri-c">
+        <b data-count="30" data-suffix="+">0</b>
+        <span>automations in production</span>
+        <p>Remediation, monitoring, deployment, audit, upgrade orchestration.</p>
+      </div>
+      <div class="tri-c">
+        <b data-count="1090" data-suffix="+">0</b>
+        <span>internal documents written</span>
+        <p>SOPs, runbooks, troubleshooting guides and escalation procedures — the knowledge base I own.</p>
+      </div>
+      <div class="tri-c">
+        <b data-count="1500" data-suffix="+">0</b>
+        <span>unattended scheduled runs</span>
+        <p>Work that happened without anybody starting it, checking it, or remembering it was due.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="split">
+      <div class="split-l">
+        <h2>Both halves</h2>
+        <p class="soft">Most infrastructure people stop at the API. Most frontend people never see the fleet. I work on both ends, and the overlap is where the useful work is — the person who understands the data is usually the right person to decide how it should look.</p>
+        <p class="bal-note">This site is the frontend sample. Hand-written, no framework, one file, routed, themed, animated, accessible.</p>
+      </div>
+      <div class="split-r">
+        <div class="donuts" id="donuts">
+          <div class="donut" data-v="92" data-l="Infrastructure"></div>
+          <div class="donut" data-v="96" data-l="Automation"></div>
+          <div class="donut" data-v="78" data-l="Frontend"></div>
+          <div class="donut" data-v="90" data-l="Documentation"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <h2>Don't take my word for any of it</h2>
+    <p class="soft">Three things I shipped, rebuilt so you can press the buttons. They run the real decision logic.</p>
+    <p style="margin-top:1.4rem"><a class="bigbtn" href="#/demos">Open the demos</a> <a class="bigbtn ghostbtn" href="#/work">See how I work</a></p>
+  </section>
+</div>
+
+<!-- ========== WORK ========== -->
+<div class="page" data-route="/work">
+  <section>
+    <div class="sec-head">
+      <h2>How I work</h2>
+      <p>Anyone can write a script that works on their machine. The job is writing one that runs on three hundred machines you can't see, at an hour you aren't awake, without anyone needing to check on it. That changes how you build.</p>
+      <div class="toggle" id="plainToggle">
+        <button class="tg on" data-mode="tech" type="button">For engineers</button>
+        <button class="tg" data-mode="plain" type="button">In plain English</button>
+      </div>
+    </div>
+    <div class="spine">
+      <div class="stepx">
+        <h3><span class="m-tech">Evidence before conclusions</span><span class="m-plain" hidden>I prove things before I claim them</span></h3>
+        <p class="m-tech">A hypothesis stays labeled as a hypothesis until something proves it. Root causes come from logs and command output, not from pattern-matching to the last thing that looked similar. When I'm wrong I say so out loud and name what changed my mind — I've retracted conclusions mid-project more than once, and the project was better for it.</p><p class="m-plain" hidden>I don't guess. If I say something is the cause, I can show you the proof. If I turn out to be wrong, I say so immediately rather than quietly changing my story — which costs me nothing and saves everyone else a lot of wasted time.</p>
+      </div>
+      <div class="stepx">
+        <h3><span class="m-tech">Fix the class, not the instance</span><span class="m-plain" hidden>I fix the cause, not the symptom</span></h3>
+        <p class="m-tech">If one machine has it, I want to know how many do before I touch any of them. A fix applied to a symptom is a fix you get to apply again next quarter.</p><p class="m-plain" hidden>When something breaks in one place, I check how many other places have the same problem before fixing anything. Otherwise you fix the same thing over and over forever.</p>
+      </div>
+      <div class="stepx">
+        <h3><span class="m-tech">Test the failure path</span><span class="m-plain" hidden>I plan for things going wrong</span></h3>
+        <p class="m-tech">The happy path is the easy half. What it does when the disk is full, the service is already running, the credential expired, or somebody ran it twice at once — that's the half that decides whether anyone trusts it.</p><p class="m-plain" hidden>Making something work when everything is fine is easy. I spend most of my time on what happens when things go wrong, because that's the part that decides whether you can leave it alone.</p>
+      </div>
+      <div class="stepx">
+        <h3><span class="m-tech">Gate before merge, every time</span><span class="m-plain" hidden>Everything is checked before it ships</span></h3>
+        <p class="m-tech">Static analysis clean at warning level. Tests covering both paths. Documentation in the file itself. Signed commits. These run on my own personal repositories where nobody is checking, because a standard you only apply when watched isn't one.</p><p class="m-plain" hidden>Everything gets reviewed and tested before it goes live, automatically. I hold my personal projects to the same standard as my work, because a standard you only follow when someone's watching isn't really a standard.</p>
+      </div>
+      <div class="stepx">
+        <h3><span class="m-tech">Critique, then ship</span><span class="m-plain" hidden>Careful beats fast</span></h3>
+        <p class="m-tech">I'd rather hold something an extra day than put a half-reviewed script in front of three hundred clients. Nothing in production has ever thanked me for being early, and a bad automation doesn't make one mistake — it makes the same mistake everywhere simultaneously.</p><p class="m-plain" hidden>I'd rather take an extra day than rush something onto hundreds of machines. A person making a mistake affects one customer. Automation making a mistake affects all of them at once, instantly.</p>
+      </div>
+      <div class="stepx">
+        <h3><span class="m-tech">Move fast when the clock is real</span><span class="m-plain" hidden>Urgent work gets done urgently</span></h3>
+        <p class="m-tech">Careful is the default, not the ceiling. When a security patch lands and every backup server in the estate is exposed, the right answer is a week, not a quarter — and the gating discipline is exactly what makes a one-week rollout safe enough to attempt.</p>
+        <p class="m-plain" hidden>Being careful doesn't mean being slow. When something genuinely can't wait, it doesn't — and the checks I build in are the reason I can move quickly without gambling.</p>
+      </div>
+      <div class="stepx">
+        <h3><span class="m-tech">Write it down</span><span class="m-plain" hidden>I document everything</span></h3>
+        <p class="m-tech">I own the internal knowledge base, which means I've seen what happens when the only person who understands a system is on vacation. If I built it, somebody else can run it without calling me.</p><p class="m-plain" hidden>I write everything down. I've seen what happens when the only person who understands a system goes on vacation, and I refuse to be that person.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Things nobody asked me to do</h2>
+      <p>The work I'm proudest of didn't come from a ticket.</p>
+    </div>
+    <div class="grid">
+      <div class="cell">
+        <h3>Found backups nobody was watching</h3>
+        <p>While working on something else I noticed a set of backup appliances that weren't being monitored at all. They held patient imaging. Nobody knew they were unattended because nothing was configured to say so. I raised it, then built the dashboard that watches them, with alerting that opens a ticket the moment one stops reporting.</p>
+      </div>
+      <div class="cell">
+        <h3>Automated a project I was assigned manually</h3>
+        <p>A fleet-wide backup upgrade was scoped as written runbooks and a technician working through appliances one at a time. I wrote the automation instead. The manual guides were retired before anyone had to follow them.</p>
+      </div>
+      <div class="cell">
+        <h3>400+ workstations to Windows 11</h3>
+        <p>An end-of-life migration across hundreds of endpoints and dozens of sites, with the scripting and the client coordination to make it land without a support queue full of people who couldn't work that morning.</p>
+      </div>
+      <div class="cell">
+        <h3>Wrote the knowledge base nobody had</h3>
+        <p>Over a thousand internal documents — SOPs, runbooks, escalation procedures, troubleshooting guides. It started because I kept answering the same question, and became the thing the whole service desk runs on.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>When it has to be fast</h2>
+      <p>Careful is the default. It isn't the only speed I have.</p>
+    </div>
+    <div class="sprint">
+      <div class="sprint-l">
+        <div class="sprint-num">7</div>
+        <div class="sprint-lab">days, patch to fleet-wide</div>
+      </div>
+      <div class="sprint-r">
+        <h3>A security patch with no manual option</h3>
+        <p>Veeam released 13.1.1.18 to close a security vulnerability. Backup servers are the last line of defence for every client we protect, and doing them by hand would have taken weeks — weeks of exposure, with the most sensitive systems in the estate sitting unpatched.</p>
+        <p>I wrote the upgrade automation in a week and rolled it across the fleet. Every appliance patched, every machine that couldn't take it reported with the specific reason instead of being left in an unknown state.</p>
+        <p class="sprint-note">Fast and careful aren't opposites. The preflight gating is what made a one-week rollout safe enough to actually do.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>What I've shipped</h2>
+      <p>Open source unless a client's name is on it. All of it runs in production somewhere, which is the only review that counts.</p>
+    </div>
+    <div class="port">
+      <div class="pcard">
+        <div class="tags">PowerShell · Veeam · 265+ appliances</div>
+        <h3>Fleet upgrade orchestration</h3>
+        <p>Backup servers on a spread of versions, most not eligible for the new release. One convergent state machine instead of a script per scenario: preflight gating, config backup, restore-point baselining, checksum-verified staging, deferred reboot. Run it twice, get the same answer.</p>
+        <a class="go" href="https://github.com/AlrightLad/msp-automation/tree/main/backup-veeam">See the code</a>
+      </div>
+      <div class="pcard">
+        <div class="tags">TypeScript · identity · hundreds of tenants</div>
+        <h3>Stale access audit</h3>
+        <p>Finds dormant accounts still holding privileged access across two systems with no shared identifier. Distinguishes "no login on record" from "we haven't looked back far enough to know" — a difference that matters a great deal before you disable somebody's account.</p>
+        <a class="go" href="https://github.com/AlrightLad/stale-access-audit">See the code</a>
+      </div>
+      <div class="pcard">
+        <div class="tags">TypeScript · telephony</div>
+        <h3>Queue presence client</h3>
+        <p>Hands the on-call phone from one engineer to the next. Writes every member explicitly, reads it back, fails loudly when the result doesn't match. Documents three API behaviors the vendor hasn't.</p>
+        <a class="go" href="https://github.com/AlrightLad/ringcentral-queue-presence">See the code</a>
+      </div>
+      <div class="pcard">
+        <div class="tags">PowerShell · network assessment</div>
+        <h3>Network assessment collector</h3>
+        <p>A site survey that used to mean a technician on site with a clipboard for most of a day. Now it's a zero-interaction collector that returns a structured report, so the engineering time goes into reading the findings instead of gathering them.</p>
+        <a class="go" href="#/demos">See the time it saves</a>
+      </div>
+      <div class="pcard">
+        <div class="tags">Vite · Firebase · Capacitor</div>
+        <h3>Parbaughs Golf Club</h3>
+        <p>A golf club in an app. Handicaps to the real standard, leagues, live leaderboards, and a record of who played with whom. Built as a static site, grown into a real build with end-to-end tests, performance budgets and secret scanning, and shipped to phones.</p>
+        <a class="go" href="#/post/parbaughs">Read the writeup</a>
+      </div>
+      <div class="pcard">
+        <div class="tags">upstream · public</div>
+        <h3>Script library contributions</h3>
+        <p>Thirty-odd pull requests to a public MSP script library — remediation, monitoring, deployment, audit. The long tail of a job where the same thing breaks at a hundred different sites.</p>
+        <a class="go" href="https://github.com/DTC-Inc/msp-script-library/pulls?q=author%3AAlrightLad">See the pull requests</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ========== DEMOS ========== -->
+<div class="page" data-route="/demos">
+  <section>
+    <div class="sec-head">
+      <h2>Watch it run</h2>
+      <p>Three things I shipped, rebuilt so you can play with them. Each carries an efficiency grade — a weighted read on time returned, how hard it was to get right, and how many situations it covers.</p>
+    </div>
+
+    <div class="eff" data-eff="A+" data-time="96" data-cx="88" data-reach="84">
+      <div class="eff-badge">A+</div>
+      <div class="eff-bars">
+        <div class="ebar"><span>time returned</span><span class="track"><span class="fill"></span></span><span class="v">96</span></div>
+        <div class="ebar"><span>complexity</span><span class="track"><span class="fill"></span></span><span class="v">88</span></div>
+        <div class="ebar"><span>reach</span><span class="track"><span class="fill"></span></span><span class="v">84</span></div>
+      </div>
+      <p class="eff-note">Fleet upgrade — roughly 20 minutes of hands-on work per appliance, 265+ appliances, replaced by one scheduled run that reports what it refused to touch and why.</p>
+    </div>
+
+    <div class="sim" style="margin-top:1.3rem">
+      <div class="sim-top">
+        <span class="sim-title"><b>fleet-upgrade</b> — 265+ backup appliances, mixed versions</span>
+        <span style="display:flex;gap:.5rem">
+          <button class="btn" id="runBtn" type="button">Run the upgrade</button>
+          <button class="btn ghost" id="resetBtn" type="button">Reset</button>
+        </span>
+      </div>
+      <div class="sim-body">
+        <div class="field" id="field"></div>
+        <div class="log" id="log"></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><b id="sDone">0</b><span>upgraded</span></div>
+        <div class="stat"><b id="sBlk">0</b><span>blocked</span></div>
+        <div class="stat"><b id="sPend">265</b><span>pending</span></div>
+        <div class="stat"><b id="sHrs">0</b><span>hours returned</span></div>
+      </div>
+      <div class="sim-foot">The blocked machines are the point. A script that charges ahead on a damaged host leaves a backup server unbootable at 2am — so this one checks first, names the specific reason, and stops.</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>Turning a site visit into a report</h2>
+      <p>A network assessment used to mean a technician on site for most of a day, writing things down. Drag the slider to see what that costs across a book of business.</p>
+    </div>
+
+    <div class="eff" data-eff="A" data-time="92" data-cx="71" data-reach="90">
+      <div class="eff-badge">A</div>
+      <div class="eff-bars">
+        <div class="ebar"><span>time returned</span><span class="track"><span class="fill"></span></span><span class="v">92</span></div>
+        <div class="ebar"><span>complexity</span><span class="track"><span class="fill"></span></span><span class="v">71</span></div>
+        <div class="ebar"><span>reach</span><span class="track"><span class="fill"></span></span><span class="v">90</span></div>
+      </div>
+      <p class="eff-note">Network assessment — unstructured discovery turned into a consistent deliverable. Every site gets the same report, which is the part clients actually notice.</p>
+    </div>
+
+    <div class="assess" style="margin-top:1.3rem">
+      <div class="as-ctl">
+        <label for="sites">sites assessed</label>
+        <input type="range" id="sites" min="1" max="60" value="12">
+        <span class="as-out" id="sitesOut">12</span>
+      </div>
+      <div class="race">
+        <div class="lane">
+          <div class="lane-top"><span>on site, by hand</span><span id="manualOut">—</span></div>
+          <div class="lane-track"><span class="lane-fill manual" id="manualBar"></span></div>
+        </div>
+        <div class="lane">
+          <div class="lane-top"><span>collector, then review findings</span><span id="autoOut">—</span></div>
+          <div class="lane-track"><span class="lane-fill auto" id="autoBar"></span></div>
+        </div>
+      </div>
+      <div class="as-foot" id="asFoot">—</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>The API that lied by omission</h2>
+      <p>Our on-call rotation hands the phone over automatically. The phone system has an endpoint for exactly that, and a behavior that isn't in its documentation. Rotate the phone and watch.</p>
+    </div>
+
+    <div class="eff" data-eff="B+" data-time="64" data-cx="93" data-reach="58">
+      <div class="eff-badge">B+</div>
+      <div class="eff-bars">
+        <div class="ebar"><span>time returned</span><span class="track"><span class="fill"></span></span><span class="v">64</span></div>
+        <div class="ebar"><span>complexity</span><span class="track"><span class="fill"></span></span><span class="v">93</span></div>
+        <div class="ebar"><span>reach</span><span class="track"><span class="fill"></span></span><span class="v">58</span></div>
+      </div>
+      <p class="eff-note">Queue presence — saves minutes a week, not hours. It scores where it does because the failure it prevents is silent, and because the finding is now documented for everyone else who hits it.</p>
+    </div>
+
+    <div class="queue" style="margin-top:1.3rem">
+      <div class="q-top">call queue — on-call rotation</div>
+      <div id="qRows"></div>
+      <div class="q-ctl">
+        <button class="btn" id="qNaive" type="button">Hand off the way you'd expect</button>
+        <button class="btn ghost" id="qRight" type="button">Hand off correctly</button>
+        <button class="btn ghost" id="qReset" type="button">Reset</button>
+      </div>
+      <div class="q-msg" id="qMsg">Week one — the first engineer is on call. Time to rotate.</div>
+    </div>
+    <p style="margin-top:1.6rem" class="soft">I found this the way everyone finds it: two phones rang. The client that came out of it is open source, and I'm writing it up for the vendor's documentation.</p>
+  </section>
+</div>
+
+<!-- ========== LAB ========== -->
+<div class="page" data-route="/lab">
+  <section>
+    <div class="sec-head">
+      <h2>The homelab</h2>
+      <p>Where things get broken before they go anywhere near a client.</p>
+    </div>
+
+    <div class="soon">
+      <div class="soon-tag">upgrades in progress</div>
+      <h2 style="font-size:1.8rem;margin-bottom:.7rem">Currently being torn apart</h2>
+      <p class="soft" style="margin-bottom:0">Running today on a UniFi Dream Machine Pro with an 8-port switch, and a Synology NAS that hosts Proxmox and Jellyfin. That's the honest current state. The interesting version is in pieces on a desk, and I'd rather show you the finished thing than a parts list.</p>
+    </div>
+
+    <div class="roadmap">
+      <div class="rmi"><span class="rmi-dot"></span><div>
+        <h3>Retro ROM server</h3>
+        <p>Boot straight to an IP and play Nintendo, PlayStation, or Xbox-era games off the network. Mostly an excuse to build something my friends will actually use.</p></div></div>
+      <div class="rmi"><span class="rmi-dot"></span><div>
+        <h3>Network-wide ad blocking</h3>
+        <p>DNS-level filtering for the whole house, integrated with the UniFi VLANs rather than bolted on beside them.</p></div></div>
+      <div class="rmi"><span class="rmi-dot"></span><div>
+        <h3>Flight tracker</h3>
+        <p>A Raspberry Pi picking up ADS-B and showing what's passing over the house. The answer is usually more than you'd think.</p></div></div>
+      <div class="rmi"><span class="rmi-dot"></span><div>
+        <h3>Home automation</h3>
+        <p>A Pi running the house. The ambition is a place where everything is observable, which is a strange thing to want in a home and completely obvious to anyone in this line of work.</p></div></div>
+      <div class="rmi"><span class="rmi-dot"></span><div>
+        <h3>Proper documentation of all of it</h3>
+        <p>VLAN layout, what runs where, and what I'd do differently. Written up here as it gets built, including the parts that go badly.</p></div></div>
+    </div>
+
+    <p style="margin-top:2rem" class="soft">Waiting on a move before the full build-out. This page fills in as it happens.</p>
+  </section>
+</div>
+
+<!-- ========== BLOG ========== -->
+<div class="page" data-route="/blog">
+  <section>
+    <div class="sec-head">
+      <h2>Blog</h2>
+      <p>Things I worked out the hard way, written down so the next person doesn't lose the evening I lost. Infrastructure, the homelab, the occasional round of golf.</p>
+    </div>
+    <div class="bgrid" id="bgrid"></div>
+  </section>
+
+  <section>
+    <div class="sub">
+      <h2 style="font-size:1.65rem">Get the next one</h2>
+      <p style="margin-top:.7rem" class="soft">An occasional note when I publish something. No schedule, no marketing, unsubscribe whenever you like.</p>
+      <form id="subForm">
+        <input type="email" id="subEmail" placeholder="you@example.com" required aria-label="Email address">
+        <button class="btn" type="submit">Subscribe</button>
+      </form>
+      <p class="sub-note" id="subNote">I send these myself. Your address doesn't go anywhere else.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ========== ARTICLE ========== -->
+<div class="page" data-route="/post">
+  <section>
+    <button class="back" id="backBtn" type="button">← back to the blog</button>
+    <div class="article" id="article"></div>
+  </section>
+</div>
+
+<!-- ========== ABOUT ========== -->
+<div class="page" data-route="/about">
+  <section class="abt-hero">
+    <div class="topo" aria-hidden="true"></div>
+    <h2>About</h2>
+    <p class="abt-sub">I'm Zach. I'm 27, I live in York, Pennsylvania, and I married Jordyn this year after ten years together. She's a dental hygienist, and I spend most of my days building for dental practices — so the software I'm fixing at work is the software she's using at hers. It keeps me honest about who's actually on the other end of a slow workstation.</p>
+  </section>
+
+  <section>
+    <p>I'm an infrastructure and integrations engineer. In practice that means I'm who gets called when something hard breaks, I own the internal knowledge base, and I spend most of my time taking work that someone does over and over and making it stop being work.</p>
+    <p>I didn't plan this. I started on a helpdesk answering phones. What I noticed was that I kept writing scripts instead of doing the same thing twice, and the scripts were better received than the manual work. So I kept going.</p>
+    <p>The thing I actually chase is pretty specific. It's the moment you find something everyone has quietly accepted — the weekly export, the manual check, the four-hour upgrade somebody does one server at a time — and you realize it doesn't have to exist anymore. Handing a team back their week is the best feeling this job has. I'd do that part for free.</p>
+    <p>I'm competitive, probably more than is healthy. Winning isn't really the bar. The bar is beating whatever I did last time. A shark has to keep swimming to stay alive and some days that's a little close to home, but it's also why the work gets better instead of just getting done.</p>
+    <p>I try hard to be honest about what I know. If I'm guessing, I say I'm guessing. If I was wrong, I say that too, as soon as I know. It's made me slower in meetings and a lot more useful in outages.</p>
+
+    <div class="trophy">
+      <div class="t-top">2026</div>
+      <h3>Winner — 57th R.A. Slavonia Invitational</h3>
+      <p>A tournament older than I am. I also wrote the app that kept score, which meant the math had to be beyond question before I could enjoy any of it.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head"><h2>Outside of work</h2></div>
+    <div class="life">
+      <div class="lc"><span class="le"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M10 4h4"/><path d="M12 6 7 10v11h10V10z"/><path d="M4 21V13l3-2M20 21v-8l-3-2"/><path d="M10.5 21v-4a1.5 1.5 0 0 1 3 0v4"/></svg></span><h3>Church</h3>
+        <p>My faith is the thing underneath the rest of it. The verse at the bottom of this site isn't decoration — it's what I come back to when a project is long and the finish line keeps moving.</p></div>
+      <div class="lc"><span class="le"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 20V3l8 3.5L9 10"/><circle cx="6.5" cy="19.5" r="2"/><path d="M4 21.5h16"/></svg></span><h3>Golf</h3>
+        <p>Regularly, competitively, and with a putter I refuse to replace. It's the one place I can't automate my way out of being bad at something, which is probably good for me.</p></div>
+      <div class="lc"><span class="le"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 19h20"/><path d="m3 19 6.5-11L14 15l2.5-4L21 19"/><circle cx="9.5" cy="8" r="0"/></svg></span><h3>Hiking</h3>
+        <p>Same reason I like infrastructure — you can see how the pieces fit together. And nothing on a trail has ever opened a ticket at 4:55 on a Friday.</p></div>
+      <div class="lc"><span class="le"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10.5 5 8.5 4.5 4 4.5v13c4.5 0 6.5.5 8 2 1.5-1.5 3.5-2 8-2v-13c-4.5 0-6.5.5-8 2Z"/><path d="M12 6.5v13"/></svg></span><h3>Reading</h3>
+        <p>Constantly. Some of it technical, a lot of it not. Reading is how I keep finding out that a problem I'm wrestling with was solved by somebody else in 1974.</p></div>
+      <div class="lc"><span class="le"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="5.5" rx="1"/><rect x="3" y="14.5" width="18" height="5.5" rx="1"/><path d="M6.5 6.75h.01M6.5 17.25h.01"/></svg></span><h3>The homelab</h3>
+        <p>Always half torn apart. It's where I break things before a client ever sees them, and it's the reason I know what a bad idea feels like before I suggest it to anyone.</p></div>
+      <div class="lc"><span class="le"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9c2.5 0 2.5 2.5 5 2.5S9.5 9 12 9s2.5 2.5 5 2.5S19.5 9 22 9"/><path d="M2 15.5c2.5 0 2.5 2.5 5 2.5s2.5-2.5 5-2.5 2.5 2.5 5 2.5 2.5-2.5 5-2.5"/></svg></span><h3>Not sitting still</h3>
+        <p>There's always something being built. If there isn't, I get restless and go find one. Jordyn can confirm.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <h2>How I got here</h2>
+      <p>Four years, four titles, and a web developer job that turned out to matter more than I expected.</p>
+    </div>
+    <div class="tl">
+      <div class="tli"><span class="tly">2021–23</span><div>
+        <h3>Junior Systems Analyst &amp; Web Developer <span class="co">MergeTech Technologies</span></h3>
+        <p>Two and a half years split between systems work and building for the web. It's where the frontend half of what I do comes from, and the reason I don't treat an interface as somebody else's problem.</p></div></div>
+      <div class="tli"><span class="tly">2021–23</span><div>
+        <h3>Computer Information Security <span class="co">HACC</span></h3>
+        <p>Information assurance and computer information systems, studied alongside working full time. Competed in the National Cyber League in 2023.</p></div></div>
+      <div class="tli"><span class="tly">2023</span><div>
+        <h3>Digital Literacy Instructor <span class="co">York County Literacy Council</span></h3>
+        <p>Teaching technology to adults who'd been told they were bad at it. The fastest way to find out whether you can actually explain something is to explain it to someone who has no reason to pretend they followed.</p></div></div>
+      <div class="tli"><span class="tly">2023</span><div>
+        <h3>Hybrid Asset Administrator <span class="co">DTC</span></h3>
+        <p>Hardware asset tracking and inventory across the client base, plus workstation provisioning for new onboardings. The ground-level view of how a fleet actually gets built.</p></div></div>
+      <div class="tli"><span class="tly">2024</span><div>
+        <h3>Tier 1 Technician <span class="co">DTC</span></h3>
+        <p>First point of contact for dental and healthcare practices. A year and a half of learning what breaks, how often, and how people describe it when it does — which is still the most useful thing I know.</p></div></div>
+      <div class="tli"><span class="tly">2025</span><div>
+        <h3>Tier 2 Technician <span class="co">DTC</span></h3>
+        <p>Supporting clients across dental, healthcare, government contractors and mid-market businesses throughout the Mid-Atlantic. Where the scripts started outnumbering the manual fixes.</p></div></div>
+      <div class="tli now"><span class="tly">2026–</span><div>
+        <h3>T3 Integrations Engineer <span class="co">DTC</span></h3>
+        <p>Escalation point for hard infrastructure work, sales engineering scoping for software integrations and Azure infrastructure, fleet-wide automation, and ownership of the knowledge base.</p></div></div>
+    </div>
+    <p style="margin-top:1.8rem" class="soft">Every one of those steps happened because I'd already been doing the next job for a while. I'm including the whole path rather than just the current title, because the helpdesk years are where most of what I actually know came from.</p>
+  </section>
+
+  <section class="cta-band">
+    <h2>Let's talk</h2>
+    <p class="soft">Contract, full time, or a question about something on this site. I answer everything.</p>
+    <p style="margin-top:1.4rem">
+      <a class="bigbtn" href="mailto:zboogher@gmail.com">zboogher@gmail.com</a>
+      <a class="bigbtn ghostbtn" href="https://www.linkedin.com/in/zachb1303/">LinkedIn</a>
+    </p>
+  </section>
+</div>
+
+</main>
+
+<div class="modal" id="contactModal" hidden>
+  <div class="modal-bg" data-close></div>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="cmTitle">
+    <button class="modal-x" data-close aria-label="Close">×</button>
+    <h3 id="cmTitle">Let's talk</h3>
+    <p class="soft" style="font-size:.93rem;margin-bottom:1.3rem">Contract work, questions, corrections, or just to say hello. Whichever is easiest.</p>
+    <a class="cm-row" href="mailto:zboogher@gmail.com">
+      <span class="cm-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="m3 7 9 6.5L21 7"/></svg></span><span><b>Email</b><em>zboogher@gmail.com</em></span></a>
+    <a class="cm-row" href="https://www.linkedin.com/in/zachb1303/">
+      <span class="cm-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9.5h4v11H3v-11Zm6.5 0h3.8v1.5h.05c.53-.95 1.83-1.95 3.77-1.95 4.03 0 4.78 2.5 4.78 5.76v5.69h-4v-5.05c0-1.2-.02-2.75-1.73-2.75-1.73 0-2 1.31-2 2.66v5.14h-4v-11Z"/></svg></span><span><b>LinkedIn</b><em>The professional version</em></span></a>
+    <a class="cm-row" href="https://github.com/AlrightLad">
+      <span class="cm-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48l-.01-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.53 2.34 1.09 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85l-.01 2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg></span><span><b>GitHub</b><em>Everything I've made public</em></span></a>
+    <a class="cm-row" href="https://www.instagram.com/alrightladdd/">
+      <span class="cm-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg></span><span><b>Instagram</b><em>Golf, trails, and the lab</em></span></a>
+  </div>
+</div>
+
+<div class="wrap">
+<footer>
+  <div class="verse-block">
+    <p class="verse">And let us not grow weary of doing good, for in due season we will reap, if we do not give up.</p>
+    <p class="vref">Galatians 6:9</p>
+  </div>
+  <div class="foot-end">
+    <span class="foot-name">Zach Boogher — York, Pennsylvania</span>
+    <button class="foot-contact" data-open-contact type="button">Get in touch</button>
+  </div>
+  <p class="colo">Set in Fraunces and IBM Plex. Hand-built, no framework, one file, no tracking.<br>
+  The demos run the real decision logic with client details removed. Figures are rounded.</p>
+</footer>
+</div>
+
+<script>
+var REDUCE=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- curtain ---------- */
+(function(){
+  var c=document.getElementById('curtain');
+  var delay=REDUCE?0:1150;
+  setTimeout(function(){c.classList.add('gone');
+    setTimeout(function(){c.style.display='none';},700);},delay);
+})();
+
+/* ---------- theme ---------- */
+(function(){
+  var root=document.documentElement,btn=document.getElementById('themeBtn');
+  function cur(){return root.hasAttribute('data-theme')?root.getAttribute('data-theme'):
+    (window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}
+  try{var s=localStorage.getItem('zb-theme');if(s==='dark'||s==='light')root.setAttribute('data-theme',s);}catch(e){}
+  btn.addEventListener('click',function(){var n=cur()==='dark'?'light':'dark';
+    root.setAttribute('data-theme',n);try{localStorage.setItem('zb-theme',n);}catch(e){}});
+})();
+
+/* ---------- hero word stagger ---------- */
+(function(){
+  var el=document.getElementById('askLine');
+  var text='What do you do a dozen times a week that annoys you and could just be a';
+  var html=text.split(' ').map(function(w,i){
+    return '<span class="w" style="animation-delay:'+(1.25+i*0.035).toFixed(2)+'s">'+w+'</span>';
+  }).join(' ');
+  html+=' <span class="w" style="animation-delay:'+(1.25+text.split(' ').length*0.035).toFixed(2)+'s"><em>button?</em></span>';
+  el.innerHTML=html;
+  if(REDUCE){[].forEach.call(el.querySelectorAll('.w'),function(w){w.style.animation='none';w.style.opacity=1;});}
+})();
+
+/* ---------- router ---------- */
+var Router=(function(){
+  var pages=[].slice.call(document.querySelectorAll('.page'));
+  var links=[].slice.call(document.querySelectorAll('#nav a'));
+  var onShow={};
+  function route(){
+    var raw=(location.hash||'#/').replace(/^#/,'')||'/';
+    var base=raw.split('/').slice(0,2).join('/')||'/';
+    var isPost=raw.indexOf('/post/')===0;
+    var target=isPost?'/post':raw;
+    var found=false;
+    pages.forEach(function(p){
+      var on=p.getAttribute('data-route')===target;
+      p.classList.remove('live');
+      if(on){p.classList.add('live');found=true;}
+    });
+    if(!found){pages[0].classList.add('live');target='/';}
+    links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+(isPost?'/blog':target));});
+    window.scrollTo(0,0);
+    if(onShow[target])onShow[target](raw);
+    if(window.Reveal) setTimeout(function(){Reveal.scan();},30);
+  }
+  window.addEventListener('hashchange',route);
+  return {start:route,on:function(r,fn){onShow[r]=fn;}};
+})();
+
+/* ---------- counters ---------- */
+Router.on('/',function(){
+  [].forEach.call(document.querySelectorAll('[data-count]'),function(el){
+    var target=parseInt(el.getAttribute('data-count'),10),suffix=el.getAttribute('data-suffix')||'';
+    if(REDUCE){el.textContent=target.toLocaleString()+suffix;return;}
+    var start=null,dur=1200;
+    el.textContent='0';
+    function tick(ts){
+      if(!start)start=ts;
+      var p=Math.min((ts-start)/dur,1),e=1-Math.pow(1-p,3);
+      el.textContent=Math.round(target*e).toLocaleString()+(p===1?suffix:'');
+      if(p<1)requestAnimationFrame(tick);
+    }
+    setTimeout(function(){requestAnimationFrame(tick);},REDUCE?0:300);
+  });
+  setTimeout(function(){drawChart();drawDonuts();},REDUCE?0:420);
+});
+
+/* ---------- cumulative hours area chart ---------- */
+function drawChart(){
+  var svg=document.getElementById('areaChart'); if(!svg) return;
+  // Estimated cumulative hours returned, month by month, rounded down to 5s.
+  var pts=[0,15,40,70,120,185,260,355,470,610,775,960,1180,1430,1700,2010,2360,2740,3160,3620,4120,4660,5250,5880];
+  var labels=['start','','','','6 mo','','','','12 mo','','','','18 mo','','','','','','','','','','','now'];
+  var W=760,H=240,PAD=8;
+  var max=pts[pts.length-1];
+  function X(i){return PAD+(i/(pts.length-1))*(W-PAD*2);}
+  function Y(v){return H-PAD-(v/max)*(H-PAD*2);}
+  var line='',area='';
+  pts.forEach(function(v,i){
+    var cmd=(i===0?'M':'L')+X(i).toFixed(1)+' '+Y(v).toFixed(1);
+    line+=cmd+' ';
+  });
+  area='M'+X(0).toFixed(1)+' '+(H-PAD)+' '+line.replace(/^M/,'L')+'L'+X(pts.length-1).toFixed(1)+' '+(H-PAD)+' Z';
+  svg.innerHTML=
+    '<defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">'+
+    '<stop offset="0%" stop-color="var(--fairway)" stop-opacity=".30"/>'+
+    '<stop offset="100%" stop-color="var(--fairway)" stop-opacity="0"/></linearGradient></defs>'+
+    '<g stroke="var(--rule)" stroke-width="1">'+
+      [0.25,0.5,0.75].map(function(f){var y=(PAD+f*(H-PAD*2)).toFixed(1);
+        return '<line x1="'+PAD+'" y1="'+y+'" x2="'+(W-PAD)+'" y2="'+y+'"/>';}).join('')+
+    '</g>'+
+    '<path d="'+area+'" fill="url(#ag)" opacity="0"/>'+
+    '<path d="'+line.trim()+'" fill="none" stroke="var(--fairway)" stroke-width="2.5" '+
+      'stroke-linecap="round" stroke-linejoin="round"/>'+
+    '<circle r="4.5" fill="var(--fairway)" cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(max).toFixed(1)+'" opacity="0"/>';
+
+  var xs=document.getElementById('chartX');
+  xs.innerHTML=labels.filter(function(l){return l;}).map(function(l){return '<span>'+l+'</span>';}).join('');
+
+  var path=svg.querySelector('path[stroke]');
+  var areaEl=svg.querySelector('path[fill^="url"]');
+  var dot=svg.querySelector('circle');
+  var big=document.getElementById('chartBig');
+  if(REDUCE){areaEl.style.opacity=1;dot.style.opacity=1;big.textContent=max.toLocaleString()+'+ hrs';return;}
+  var len=path.getTotalLength();
+  path.style.strokeDasharray=len;path.style.strokeDashoffset=len;
+  path.style.transition='stroke-dashoffset 1.6s cubic-bezier(.3,.7,.3,1)';
+  areaEl.style.transition='opacity .9s .6s';
+  dot.style.transition='opacity .4s 1.5s';
+  requestAnimationFrame(function(){
+    path.style.strokeDashoffset=0;areaEl.style.opacity=1;dot.style.opacity=1;
+  });
+  var t0=null;
+  function tick(ts){ if(!t0)t0=ts; var p=Math.min((ts-t0)/1600,1);
+    big.textContent=(Math.round(max*(1-Math.pow(1-p,3))/5)*5).toLocaleString()+(p===1?'+ hrs':'');
+    if(p<1)requestAnimationFrame(tick); }
+  requestAnimationFrame(tick);
+}
+
+/* ---------- donuts ---------- */
+function drawDonuts(){
+  [].forEach.call(document.querySelectorAll('.donut'),function(d,i){
+    var v=+d.getAttribute('data-v'),label=d.getAttribute('data-l');
+    var R=42,C=2*Math.PI*R;
+    d.innerHTML='<svg viewBox="0 0 110 110">'+
+      '<circle cx="55" cy="55" r="'+R+'" fill="none" stroke="var(--paper-2)" stroke-width="9"/>'+
+      '<circle cx="55" cy="55" r="'+R+'" fill="none" stroke="var(--fairway)" stroke-width="9" '+
+        'stroke-linecap="round" transform="rotate(-90 55 55)" '+
+        'stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+C.toFixed(1)+'"/>'+
+      '<text x="55" y="61" text-anchor="middle" fill="var(--ink)" '+
+        'font-family="Fraunces,serif" font-size="22" font-weight="600">'+v+'</text>'+
+      '</svg><span class="dl">'+label+'</span>';
+    var ring=d.querySelectorAll('circle')[1];
+    if(REDUCE){ring.style.strokeDashoffset=(C*(1-v/100)).toFixed(1);return;}
+    ring.style.transition='stroke-dashoffset 1.1s cubic-bezier(.2,.8,.3,1)';
+    setTimeout(function(){ring.style.strokeDashoffset=(C*(1-v/100)).toFixed(1);},180+i*130);
+  });
+}
+
+/* ---------- efficiency bars ---------- */
+function fillEff(){
+  [].forEach.call(document.querySelectorAll('.eff'),function(box){
+    var vals=[box.getAttribute('data-time'),box.getAttribute('data-cx'),box.getAttribute('data-reach')];
+    [].forEach.call(box.querySelectorAll('.fill'),function(f,i){
+      f.style.width='0%';
+      setTimeout(function(){f.style.width=vals[i]+'%';},120+i*110);
+    });
+  });
+}
+
+/* ---------- fleet simulator ---------- */
+var Sim=(function(){
+  var TOTAL=265,field=document.getElementById('field'),log=document.getElementById('log');
+  var runBtn=document.getElementById('runBtn'),resetBtn=document.getElementById('resetBtn');
+  var sDone=document.getElementById('sDone'),sBlk=document.getElementById('sBlk'),
+      sPend=document.getElementById('sPend'),sHrs=document.getElementById('sHrs');
+  var nodes=[],timers=[],running=false;
+  var BLOCKS=['windows servicing damaged — repair required first',
+    'source build below minimum — two-hop path needed',
+    'port 443 in use — web service would fail to bind',
+    'insufficient free space — 55 GB required',
+    'powershell 7 absent — installer prerequisite'];
+  function build(){field.innerHTML='';nodes=[];
+    for(var i=0;i<TOTAL;i++){var d=document.createElement('div');d.className='node';field.appendChild(d);nodes.push(d);}}
+  function say(t,c){var d=document.createElement('div');if(c)d.className=c;d.textContent=t;log.appendChild(d);log.scrollTop=log.scrollHeight;}
+  function at(ms,fn){timers.push(setTimeout(fn,ms));}
+  function reset(){
+    timers.forEach(clearTimeout);timers=[];running=false;build();
+    log.innerHTML='';say('ready. '+TOTAL+'+ appliances discovered.');
+    sDone.textContent='0';sBlk.textContent='0';sPend.textContent=TOTAL;sHrs.textContent='0';
+    runBtn.disabled=false;runBtn.textContent='Run the upgrade';
+  }
+  function run(){
+    if(running)return;running=true;runBtn.disabled=true;runBtn.textContent='Running…';
+    timers.forEach(clearTimeout);timers=[];log.innerHTML='';
+    say('starting. 14 preflight gates per appliance.','s');
+    var order=[];for(var i=0;i<TOTAL;i++)order.push(i);
+    for(var j=order.length-1;j>0;j--){var k=Math.floor(Math.random()*(j+1));var t=order[j];order[j]=order[k];order[k]=t;}
+    var done=0,blocked=0,blkLogged=0,step=REDUCE?2:14;
+    order.forEach(function(idx,n){
+      var isB=Math.random()<0.085,t0=n*step;
+      at(t0,function(){nodes[idx].className='node chk';});
+      at(t0+(REDUCE?2:180),function(){
+        if(isB){nodes[idx].className='node blk';blocked++;sBlk.textContent=blocked;
+          if(blkLogged<6){blkLogged++;say('blocked  '+BLOCKS[Math.floor(Math.random()*BLOCKS.length)],'r');}}
+        else{nodes[idx].className='node up';
+          at(REDUCE?2:220,function(){nodes[idx].className='node ok';done++;sDone.textContent=done;
+            sHrs.textContent=Math.round(done*0.33*5)/5;});}
+        sPend.textContent=Math.max(0,TOTAL-done-blocked);
+      });
+    });
+    var end=TOTAL*step+(REDUCE?60:700);
+    at(Math.round(end*0.25),function(){say('config backup taken at T-0','s');});
+    at(Math.round(end*0.55),function(){say('restore-point baseline written','s');});
+    at(Math.round(end*0.78),function(){say('iso staged, sha256 verified','s');});
+    at(end,function(){
+      running=false;runBtn.disabled=false;runBtn.textContent='Run it again';
+      say('—');say('complete. '+sDone.textContent+' upgraded, '+sBlk.textContent+' blocked and reported.','g');
+      say('nothing was left half-upgraded.','g');sPend.textContent='0';
+    });
+  }
+  runBtn.addEventListener('click',run);
+  resetBtn.addEventListener('click',reset);
+  return {reset:reset,auto:function(){reset();setTimeout(run,REDUCE?0:900);}};
+})();
+
+/* ---------- assessment slider ---------- */
+(function(){
+  var slider=document.getElementById('sites'),out=document.getElementById('sitesOut'),
+      mOut=document.getElementById('manualOut'),aOut=document.getElementById('autoOut'),
+      mBar=document.getElementById('manualBar'),aBar=document.getElementById('autoBar'),
+      foot=document.getElementById('asFoot');
+  var MANUAL=6, AUTO=0.75;   // hours per site
+  function round5(n){return Math.round(n/5)*5;}
+  function render(){
+    var n=parseInt(slider.value,10);
+    out.textContent=n;
+    var m=n*MANUAL,a=n*AUTO;
+    mOut.textContent=round5(m)+'+ hrs';
+    aOut.textContent=(Math.round(a*2)/2)+' hrs';
+    mBar.style.width='100%';
+    aBar.style.width=Math.max(2,(a/m)*100)+'%';
+    var saved=round5(m-a);
+    var days=Math.round((m-a)/8/5)*5;
+    foot.textContent='About '+saved+'+ hours returned across '+n+' site'+(n===1?'':'s')+
+      (days>=5?' — roughly '+days+'+ working days back into engineering time.':'.');
+  }
+  slider.addEventListener('input',render);
+  render();
+})();
+
+/* ---------- queue demo ---------- */
+(function(){
+  var NAMES=['Engineer A','Engineer B','Engineer C','Engineer D'];
+  var rowsEl=document.getElementById('qRows'),msg=document.getElementById('qMsg');
+  var state=[true,false,false,false];
+  function render(ring){
+    rowsEl.innerHTML='';
+    state.forEach(function(on,i){
+      var r=document.createElement('div');r.className='q-row';
+      var n=document.createElement('span');n.className='q-name';n.textContent=NAMES[i];
+      var s=document.createElement('span');s.className='q-state'+(on?' on':'');s.textContent=on?'on call':'off';
+      var p=document.createElement('span');p.className='q-ring'+(ring&&on?' show':'');p.textContent='☎';
+      r.appendChild(n);r.appendChild(s);r.appendChild(p);rowsEl.appendChild(r);
+    });
+  }
+  function set(t,c){msg.className='q-msg'+(c?' '+c:'');msg.textContent=t;}
+  document.getElementById('qNaive').addEventListener('click',function(){
+    state[1]=true;render(true);
+    set('A call comes in and two phones ring. Putting Engineer B on call succeeded — but the request never mentioned Engineer A, so Engineer A stayed on call. The endpoint updates only what you name. No error, no warning.','bad');});
+  document.getElementById('qRight').addEventListener('click',function(){
+    state=[false,true,false,false];render(true);
+    set('One phone. Every member was written explicitly — the incoming one on, everyone else off — then read back to confirm it matched. If it had not matched, it would have thrown.','good');});
+  document.getElementById('qReset').addEventListener('click',function(){
+    state=[true,false,false,false];render(false);
+    set('Week one — the first engineer is on call. Time to rotate.');});
+  render(false);
+})();
+
+Router.on('/demos',function(){Sim.auto();fillEff();});
+
+/* ---------- plain-english toggle ---------- */
+(function(){
+  var box=document.getElementById('plainToggle');
+  if(!box)return;
+  box.addEventListener('click',function(e){
+    var b=e.target.closest('.tg');if(!b)return;
+    var mode=b.getAttribute('data-mode');
+    [].forEach.call(box.querySelectorAll('.tg'),function(x){x.classList.toggle('on',x===b);});
+    [].forEach.call(document.querySelectorAll('.m-tech'),function(x){x.hidden=(mode!=='tech');});
+    [].forEach.call(document.querySelectorAll('.m-plain'),function(x){x.hidden=(mode!=='plain');});
+  });
+})();
+
+
+
+/* ---------- blog ---------- */
+var POSTS=[
+  {slug:'parbaughs',cat:'Frontend',date:'October 2026',read:'10 min',
+   title:'Parbaughs Golf Club: the app I wrote so nobody has to argue about the math',
+   teaser:"It started as one HTML file. It is now a real build with handicaps to the USGA standard, live leaderboards and a native app on a phone. Most of what I learned was not about golf.",
+   body:[
+     ['p','Parbaughs Golf Club is a golf club that only exists as software. There is no clubhouse. There is a group of us who play, a set of courses, and a running record of everything anybody has ever shot.'],
+     ['p','It started because of an argument. Somebody\'s handicap was wrong, or felt wrong, and working out whose math was right took longer than the round had. I would rather build a scoring system than have that conversation twice, so I did.'],
+     ['h3','Version one was a single file'],
+     ['p','One index.html, some images, Firebase for storage, hosted as a static page. No build step, no framework, no backend. You could read the entire application in one sitting.'],
+     ['p','I want to defend that, because it is unfashionable. For what it did, it was the correct architecture. Multiple people needed to see shared data from their own phones. That is the exact problem a client SDK plus a hosted database solves, and adding a server would have bought nothing except a server to maintain.'],
+     ['p','The things that eventually forced it to grow were not architectural. They were features.'],
+     ['h3','The handicap is the hard part, and not for the reason you would guess'],
+     ['p','Handicaps are not an average. The real standard takes a differential for each round, adjusted for how hard the course is and how it compares to par, and then uses the best handful from your most recent twenty. It is a defined calculation with a real specification, and if you are going to put a number next to somebody\'s name you had better implement the actual thing rather than something that feels close.'],
+     ['p','The math is not the hard part. The hard part is that people want to know why their number moved. "The algorithm" is not an answer anybody has ever accepted. So the calculation has to be able to show its work — which rounds counted, which were dropped, what each one contributed.'],
+     ['p','That requirement changed the data model more than any performance concern did. A number you can defend has to keep its inputs.'],
+     ['h3','Where the database pushed back'],
+     ['p','The data is genuinely relational. Golfers play rounds, rounds happen at courses, rounds have multiple players in them, and everybody wants to know who they have played with and how they did. That is a join-shaped question, and the database I chose does not do joins.'],
+     ['p','For the handicap itself that is fine — best few differentials from one golfer\'s last twenty is a single-collection query. For "show me everyone I have ever played with and how we both did," it is not. That fans out.'],
+     ['p','I looked seriously at moving to something relational, and then did not, which I think was the right call. At the scale this operates at the friction is real but survivable, and the cost of migrating was certain while the benefit was speculative. The honest version of that decision is: I knew what the migration path was, I confirmed it was still open, and I chose not to take it yet. That is a different thing from not having thought about it.'],
+     ['h3','What made it grow up'],
+     ['p','Multiple leagues was the change that broke the simple version. Supporting more than one group meant every query grew a scope it did not have before, and the data had to be migrated rather than just extended. That is the first time I had to write a migration for something I had built myself and shipped to people who were using it.'],
+     ['p','Then it went onto phones as a real installable app, which is where the environment stopped being forgiving. A phone on a golf course has bad signal and a screen in direct sunlight, and the person using it is standing on a tee box with three people waiting. Nothing about that is a desktop browser.'],
+     ['h3','The tooling, and why there is so much of it'],
+     ['p','This is a hobby project for a group of friends and it has a stricter quality gate than some production systems I have been handed: end-to-end browser tests, unit tests, linting, performance budgets, dead-code detection, duplicate-code detection, and secret scanning on every commit.'],
+     ['p','That is partly because I wanted to see how far I could take it. It is mostly because I got to find out the hard way what happens without it.'],
+     ['p','Earlier this year I leaked a credential into the repository. Not a catastrophe, caught and rotated, but entirely my own doing and avoidable. The response was not to be more careful. Being more careful is not a control. The response was a pre-commit hook that scans for secrets and refuses the commit, so the same mistake cannot be made the same way again.'],
+     ['p','That is the single most useful thing this project has taught me and it transferred straight into my day job. When something goes wrong, the fix is a mechanism, not an intention.'],
+     ['h3','What real users do'],
+     ['p','They enter a score of 847. They lose signal halfway through a round and expect the app to cope. They find the one screen you tested least. They ask why their handicap moved, in person, at a bar, and they are not satisfied by a shrug.'],
+     ['p','None of that is a complaint. It is the whole value of shipping something to people who know where you live. Internal tooling gets used carefully by people who understand it. This gets used carelessly by people who do not, which is a far better test.'],
+     ['h3','And then I won with it'],
+     ['p','This year I played the 57th R.A. Slavonia Invitational for the first time, with my grandfather caddying, and won it.'],
+     ['p','Which put me in an awkward position, because I wrote the scoring system. There is no version of that story that is comfortable unless the math is beyond question. So it got checked by hand, against the specification, more than once, before I let myself enjoy any of it.'],
+     ['p','Mostly I think about my grandfather on the bag. But the fact that nobody had to take my word for the numbers is the part I was quietly proud of.'],
+     ['h3','What I took away'],
+     ['p','Build the simplest thing that solves the actual problem. One HTML file was right until it genuinely was not, and I would start there again.'],
+     ['p','A number you put next to somebody\'s name has to be able to explain itself.'],
+     ['p','When you make a mistake, add a control, not a resolution.'],
+     ['p','And ship something to people who will tell you to your face when it is wrong. It is the fastest feedback loop there is.']
+   ]},
+  {slug:'capacitor-cve',cat:'Security',date:'October 2026',read:'6 min',
+   title:'A 9.3 landed in a framework I ship on. Here is what I did about it.',
+   teaser:"CVE-2026-103922 hits Capacitor, which my golf app is built on. I was on an affected version. This is what the flaw is, how I checked, and what it takes to actually protect the people using it.",
+   body:[
+     ['p','Most of my job is patching other people\'s software across a fleet. On the first of October I got to be on the other side of it: a critical vulnerability landed in a framework I personally ship on.'],
+     ['p','CVE-2026-103922 affects Capacitor, the runtime that wraps a web application into a real Android and iOS app. It scored 9.3. I use Capacitor for a golf tournament app I built, which has actual users, on actual phones, holding actual accounts.'],
+     ['h3','What the flaw is'],
+     ['p','Capacitor has a navigation guard that decides whether the WebView is allowed to load a given URL. It checks the target\'s host and scheme. It does not check the path.'],
+     ['p','There is an internal HTTP proxy path inside the runtime. Because the guard ignores paths, a victim who activates a crafted link can get remote content fetched through that proxy and returned as a document at the application\'s own origin.'],
+     ['p','Once something is running at your app\'s origin, it is not remote content anymore. It is your app. It can read same-origin storage and cookies, and it can reach the native plugin capabilities the app has registered — camera, filesystem, whatever you wired up.'],
+     ['p','The detail that makes this worse than it first reads: the proxy path is served whether or not you have the HTTP plugin enabled. Turning the feature off does not take you out of scope. I had assumed it would, which is exactly the kind of assumption worth writing down after it turns out to be wrong.'],
+     ['h3','Fixed versions'],
+     ['p','Patched in 6.2.2, 7.6.9, 8.3.5, 8.4.3 and 8.5.1. The affected ranges span every major line from 6.0.0 up, so "I am on 8" tells you nothing by itself — there are affected 8.x releases above and below several of those fix points.'],
+     ['p','That is the trap. The version numbers are not a simple floor. You have to check your exact version against your specific branch.'],
+     ['h3','How I checked'],
+     ['p','Same thing I would do on a client fleet, scaled down to one repository.'],
+     ['p','First, establish what is actually installed rather than what the manifest asks for. A dependency range in package.json is a request, not a fact. The lockfile is the fact.'],
+     ['p','Second, check every Capacitor package, not just core. Core, android and ios all carry the same affected ranges, and they do not always move together in a project that has been upgraded piecemeal.'],
+     ['p','Third, and this is the part people skip: a fix in your lockfile does not protect anybody. Capacitor ships inside a compiled binary. Until the app is rebuilt and redistributed, every copy already on a phone is still running the vulnerable runtime. Patching the repository is step one of two, and step two involves app stores and a review queue.'],
+     ['h3','What I found'],
+     ['p','I was on an affected version. Not close to the line, not arguably fine — inside the range, with the proxy path served and the navigation guard not checking it.'],
+     ['p','That was a slightly cold feeling. It is one thing to know abstractly that a dependency is a thing you inherit risk from. It is another to look at a lockfile and realise that for some period of time, anybody who could get one of my users to tap a crafted link had a path to running script at my app\'s origin — against their session, their stored data, and whatever native capability the app had been granted.'],
+     ['p','There are twenty-seven people using this. That is a small number and it is also twenty-seven real people, several of whom I will see this weekend. Scale does not change the obligation; it just changes how awkward the conversation would be.'],
+     ['p','So: upgraded to the patched release on my line, verified the resolved versions in the lockfile rather than the manifest, confirmed core, android and ios had all actually moved, and rebuilt and redistributed. The last part is the part that counts. Until the binary on the phone changes, nothing you did in the repository has protected anyone.'],
+     ['h3','The part worth generalising'],
+     ['p','I have spent a lot of this year building tooling to answer the question "which of our machines are exposed and how do we know." It is a different feeling to ask it about something you wrote yourself.'],
+     ['p','Three things carried over from the day job.'],
+     ['p','<strong>The inventory comes before the remediation.</strong> You cannot patch what you have not enumerated, and a version range is not an inventory.'],
+     ['p','<strong>Disabling the feature is not the same as removing the exposure.</strong> This one is almost universal. The code path usually still exists; the toggle only changes whether you were planning to use it.'],
+     ['p','<strong>Fixed in the repository is not fixed in the field.</strong> True for a mobile app waiting on a store review, true for a server waiting on a maintenance window, and true for the backup appliance that cannot take the update until something else is repaired first. The gap between those two states is where the actual risk lives, and it is the thing worth measuring.'],
+     ['p','If you ship anything on Capacitor, go and look at your lockfile now rather than after the weekend.']
+   ]},
+  {slug:'stale-access',cat:'Infrastructure',date:'October 2026',read:'9 min',
+   title:'The accounts nobody was counting',
+   teaser:"Our RMM knows every account that exists. It has no good way to show you which ones have stopped being used. Across a few hundred client organizations, that gap was the whole problem.",
+   body:[
+     ['p','Every managed services company has the same quiet risk sitting in it. Someone leaves a client, their account gets forgotten, and it keeps its remote access to the machines at that practice. Nothing breaks. No alert fires. The account sits there holding a key to a building it has no reason to enter.'],
+     ['p','We had a few hundred client organizations and a few thousand endpoints. I wanted a single view of every account that still had access but had stopped using it. I assumed that was a built-in report.'],
+     ['h3','The data exists. The view does not.'],
+     ['p','Our RMM tracks who exists, and it records logins as events in an activity feed. What it does not give you is the two joined together — a dashboard where you can glance at a client and see staleness at a glance. The raw material is all there. Nothing assembles it.'],
+     ['p','So I rebuilt the picture from the activity logs. Read the feed, attribute logins to accounts, hold that state over time, and produce the view the console does not have.'],
+     ['p','That sounds like an afternoon. It was not, for three reasons I did not see coming.'],
+     ['h3','Problem one: proving you looked back far enough'],
+     ['p','The obvious approach is to read the feed, note the last login per user, and call anybody without a recent one stale. The flaw shows up immediately: if you only read thirty days, an account that logged in forty days ago looks identical to one that has never logged in at all.'],
+     ['p','Those are completely different situations. One is a dormant account. The other is a gap in what you looked at. Treat them the same and you eventually disable a real person on a Friday afternoon, and that person is a dentist who cannot see patients.'],
+     ['p','So the model does not store "last login." It stores two separate facts: the last login actually observed, and the floor below which nothing has been read yet. A user with no login above that floor is not stale. They are unknown, and unknown is its own answer. The report says so in plain language rather than guessing.'],
+     ['h3','Problem two: reading a feed without missing the middle'],
+     ['p','The activity feed is paginated and descending. Ask for everything newer than a saved position and you get the newest page, not the oldest one. If more than a page of events happened since you last looked, the middle silently disappears.'],
+     ['p','A naive loop that keeps asking for newer events until it gets a short page feels correct and quietly drops data. The walker instead reads backward from the newest event until it reaches the position it saved last time, proving continuity. If it cannot prove it, it says so and moves the floor rather than reporting a clean sweep it did not perform.'],
+     ['p','This is the part I would want a reviewer to look at first. It is not clever code. It is code that knows what it does not know.'],
+     ['h3','Problem three: two systems that share no identifier'],
+     ['p','Access lives in the RMM. The record of who should have access lives in the PSA. They have separate record IDs, separate names for the same client, and names drift the moment somebody edits one.'],
+     ['p','Matching on name is a trap. So is matching on vendor record ID, which breaks the moment a record gets recreated on one side.'],
+     ['p','The key that works is one the organization mints itself at onboarding and writes into a custom field on both systems: an organization GUID and a site GUID. Rename-proof, survives a record being rebuilt, resolves down to the individual site, and when it is missing it fails loudly as "unmatched" instead of quietly matching the wrong thing. If you are building something similar, this is the design decision that matters most.'],
+     ['h3','Who actually uses it'],
+     ['p','I built this as a security and hygiene tool. The engineering team uses it that way — one place to see who still has access at a client and whether anyone is using it.'],
+     ['p','The group I did not expect was the account managers. Remote access is a billed line item, and stale accounts mean the seat count on an invoice drifts away from the seat count in reality. The same report that answers "who should we be offboarding" also answers "are we billing this client accurately," and the second question turned out to matter to more people than the first.'],
+     ['p','That has stuck with me. The most useful thing about a dataset is often not the question you built it to answer.'],
+     ['h3','What it will not do, and why'],
+     ['p','The natural ending is disabling stale accounts automatically. I could not build that: the API will not accept it. The endpoint that manages end users does not expose the enabled flag at all — the request comes back rejected, and no amount of reshaping the payload changes it.'],
+     ['p','I spent a while annoyed about that before deciding it is probably correct. A tool that can silently disable a dentist at 2am has a worse failure mode than the problem it solves.'],
+     ['p','So the audit surfaces, it does not act. It produces the list, the evidence behind each entry, and the client each account belongs to. A human runs the offboarding process. The automation removes the part that was impossible to do by hand — finding them — and leaves the part that needs judgment alone.'],
+     ['h3','What is next'],
+     ['p','We also have remote users coming in through a different path entirely, with per-client tenants and no footprint in the systems the audit currently reads. They are invisible to all of this.'],
+     ['p','The plan is to define those tenants as infrastructure code, so the list of who exists is a file in version control rather than something you log in somewhere to check. That definition then feeds the same reconciliation, and one view covers everyone regardless of which door they came through.'],
+     ['p','The reconciliation logic is public, sanitized, with tests: <a href="https://github.com/AlrightLad/stale-access-audit">github.com/AlrightLad/stale-access-audit</a>.']
+   ]},
+  {slug:'veeam-fleet',cat:'Backup & DR',date:'October 2026',read:'11 min',
+   title:'Two hundred and sixty-five appliances, by hand',
+   teaser:"Nobody said it could not be done. They said it was becoming an enormous amount of work and the end of it was hard to see. That is a different problem, and a more interesting one.",
+   body:[
+     ['p','Veeam released a new major version. We had roughly 265 backup appliances across the client base, sitting on a spread of versions going back years.'],
+     ['p','The team costed it honestly: one to two hours per machine, by hand. For 265 machines that is somewhere between seven and sixteen working weeks. Nobody called it impossible. What they said was that it was turning into a mountain, and that finishing it looked a long way off. That is a fair read, and it is the kind of work that quietly eats a quarter.'],
+     ['p','I picked it up and spent the first stretch not writing anything. I read Veeam\'s own documentation and white papers on the upgrade paths, and worked through the problem with Claude as a research partner — not to write the script, but to pressure-test whether the constraints were as rigid as they looked, and which parts of the sequence had a door in them.'],
+     ['p','The answer came back: all of it. Every step in that one-to-two-hour manual process could be automated. It just could not be automated the way I first assumed.'],
+     ['h3','Why it looked like a mountain'],
+     ['p','Four things, any one of which stops a naive script.'],
+     ['p','<strong>The version floor.</strong> The new release will not accept most older versions as a starting point. A large portion of the fleet needed an intermediate upgrade first, then the real one. That is not one upgrade, it is a path, and the path differs depending on where a machine starts.'],
+     ['p','<strong>The installer refuses to run as the system account.</strong> Which is exactly the account an RMM uses to run anything. The documented workaround collides with a local database authentication quirk, which means the account it runs as actually matters rather than being incidental.'],
+     ['p','<strong>A hard dependency on a newer PowerShell.</strong> Not present on most of the fleet, and not something you can assume.'],
+     ['p','<strong>No maintenance window.</strong> Backup and replication run on an hourly cycle. There is no quiet hour. The upgrade has to coexist with a system that is actively working.'],
+     ['h3','Starting with the inventory instead of the installer'],
+     ['p','The first thing I built was not an upgrade. It was a query against the RMM API that told me exactly what version every appliance was on, and what share of the fleet sat at each one.'],
+     ['p','That split the fleet into three tracks. A portion were already current or close. A large middle group could go directly. The rest needed the two-hop path. Once the shape was visible, "automate the upgrade" stopped being one enormous problem and became three tractable ones.'],
+     ['p','I would do this first on any fleet-wide project now. The inventory is cheap, it is read-only, and it turns an unbounded problem into a bounded one.'],
+     ['h3','The rollercoaster'],
+     ['p','The first track worked within a couple of days, which was encouraging and misleading.'],
+     ['p','Then the two-hop path broke the agent connections on the machines being backed up. The script was written to preserve configuration and logs as a rollback option. It turned out it did not actually roll anything back, which I found out the way you always find these things out: at night, on a machine that mattered.'],
+     ['p','Then the PowerShell dependency, solved with a bootstrapper that installs what it needs and relaunches itself.'],
+     ['p','Then the reboot problem. Some machines needed to restart between the two hops, which meant the script had to run, reboot, and run again knowing it was the second attempt. That turned out to be the design insight rather than the obstacle: instead of a procedure that runs start to finish, it became a state machine that works out where the machine currently is and does the next correct thing. Run it on a finished machine and it says so and exits. Run it twice and nothing bad happens.'],
+     ['h3','The failure that justified the whole approach'],
+     ['p','Some machines had quietly damaged Windows servicing — the component responsible for applying updates at all. Three errors chained: the servicing stack update fails, the repair command that should fix it fails because it cannot find a source, and the final package cannot apply on top of either.'],
+     ['p','A script that charges ahead on one of those finds out partway through installing. On a backup server. The thing you would reach for if the upgrade went wrong is the thing the upgrade is currently halfway through breaking.'],
+     ['p','So it checks first, names the specific failure, and refuses. That machine stays on its old version, still backing up, flagged for a human. That is not the automation failing. That is the automation doing the single most important thing it does.'],
+     ['h3','Then the security patch'],
+     ['p','Partway through, Veeam shipped a release closing a security vulnerability. The timeline stopped being a preference.'],
+     ['p','Because the orchestration already existed, it went out across the fleet in a week. Every appliance patched or explicitly reported as blocked with a reason. On the manual plan we would have been weeks into a months-long rollout with the most sensitive systems in the estate still exposed.'],
+     ['h3','What is next'],
+     ['p','Upgrading the fleet is one problem. Knowing the state of it afterward is another, and right now that answer lives in several places at once.'],
+     ['p','I am building a dashboard that pulls backup status and alerting into one view, joined against the custom fields we already populate in the RMM, so a failing job and the machine it belongs to are the same row rather than two separate investigations. Same principle as the upgrade work: the data already exists, it just is not assembled anywhere.'],
+     ['h3','What I would tell someone starting this'],
+     ['p','Build the inventory before the automation. Let the data tell you how many problems you actually have.'],
+     ['p','Write a state machine, not a procedure. Anything running unattended across hundreds of machines will get interrupted, and the ability to run it again safely is worth more than elegance.'],
+     ['p','Spend most of your time on the preflight. The interesting engineering in a fleet upgrade is never the upgrade. It is everything that must be true before the upgrade begins, and the discipline to stop when it is not.'],
+     ['p','And the part worth saying plainly: the one-to-two-hours-per-machine estimate was not wrong. By hand, it really would have taken months. The question was never whether the arithmetic was right. It was whether the work had to be done by hand at all.'],
+     ['p','Sanitized and public: <a href="https://github.com/AlrightLad/msp-automation/tree/main/backup-veeam">github.com/AlrightLad/msp-automation</a>.']
+   ]},
+  {slug:'whats-next',cat:'Personal',date:'October 2026',read:'5 min',
+   title:'Lancaster, a caddie, and the first place that is actually mine',
+   teaser:"Somebody asked what I was looking forward to and I did not have an answer ready, which felt like a problem worth fixing. Not a technical post.",
+   body:[
+     ['p','I spend most of my writing explaining systems. This one is not that.'],
+     ['h3','Lancaster'],
+     ['p','We are getting ready to move to the Lancaster area. Closer to our church, closer to Jordyn\'s work, and closer to most of our favourite places to eat and hike — which, when you add it up, is most of what we actually do with our time.'],
+     ['p','The part I am looking forward to most is harder to explain to people who have not been there. I have been on my own since I was sixteen. Couch surfing for a stretch of it, figuring out the rest as it came. So a home is not a neutral word for me, and having a place that is genuinely ours — with room for a family in it eventually — is the thing I am most looking forward to in my life, not just this year.'],
+     ['p','It also means the homelab stops being a holding pattern. It has been half torn apart for months because I refused to build anything properly until there was a room to build it in.'],
+     ['h3','The tournament, and my grandfather'],
+     ['p','I won the 57th R.A. Slavonia Invitational this year. It has been running longer than I have been alive and it was my first time ever playing it.'],
+     ['p','My grandfather caddied for me. That is the part I will still be thinking about in forty years — not the score, not the trophy. Walking a course I had never played with him on the bag, and then winning the thing. You do not get to plan a day like that. It just happens to you and you spend the rest of your life being glad it did.'],
+     ['p','I also wrote the app that kept score, which meant the math had to be beyond question before I could enjoy any of it.'],
+     ['h3','The summer I have had'],
+     ['p','Honestly, a very good one. The weather has held, I have played more golf than I have in years, and the fall has been better than the summer. I am not going to over-think that one.'],
+     ['h3','Work, which I did not expect to write about here'],
+     ['p','I moved into a tier-three integrations engineer role this year and it has been the most development I have had in a stretch that short.'],
+     ['p','The reason is the team. Everyone around me has more experience than I do in some direction, and all of them are openly willing to hand it over — which is not a given. I have worked places where knowledge was something people held onto. Here it is the opposite, and the difference in how fast you get better is enormous. They are the best motivators I have had and most of what I know now came from being allowed to ask.'],
+     ['p','That is worth saying out loud, because people usually only write about the job when it is going badly.'],
+     ['h3','What I am learning'],
+     ['p','More of the interface half. I came up through systems work, but data is only useful if somebody can read it, and I have found I like the problem of making a screen that answers a question before you have to ask it. This site is partly an exercise in that.'],
+     ['p','And writing. Not code — writing. I have written a lot of internal documentation and I have gotten reasonably good at explaining something to a person who has to act on it at 2am. Doing that in public, where nobody has to read it, is a different and harder skill. These first posts are the start of finding out whether I have it.'],
+     ['h3','What I would like'],
+     ['p','More problems where the answer is not obvious at the start. The best weeks are the ones where something that looked like a mountain turns out to have a door in it.'],
+     ['p','Beyond that: a finished lab, a lower handicap, a house with our name on it, and to still enjoy this when it stops being novel. So far so good.']
+   ]},
+  {slug:'vlan-regrets',cat:'Homelab',date:'coming soon',read:'4 min',
+   title:'What my VLAN layout gets wrong',
+   teaser:"The fastest way to learn network design is to run one badly for a while first. I have the receipts. Being written as the lab gets rebuilt after the move.",
+   body:[
+     ['p','Being written as the lab gets rebuilt after the move. The short version: the segmentation I set up first made sense for the network I had, and stopped making sense about four devices later.'],
+     ['p','Full writeup coming, including the parts that went badly.']
+   ]}
+];
+
+function renderBlog(){
+  var g=document.getElementById('bgrid');
+  g.innerHTML='';
+  POSTS.forEach(function(p){
+    var c=document.createElement('a');
+    c.className='bcard';c.href='#/post/'+p.slug;c.style.borderBottomColor='var(--rule)';
+    c.innerHTML='<div class="bmeta"><span class="cat">'+p.cat+'</span><span class="dt">'+p.date+'</span>'+
+      '<span class="dt">'+p.read+'</span>'+(p.video?'<span class="hasvid">video</span>':'')+'</div><h3>'+p.title+'</h3><p>'+p.teaser+'</p>'+
+      '<span class="rm">Read it</span>';
+    g.appendChild(c);
+  });
+}
+Router.on('/blog',renderBlog);
+
+Router.on('/post',function(raw){
+  var slug=raw.replace('/post/','');
+  var p=null;POSTS.forEach(function(x){if(x.slug===slug)p=x;});
+  var el=document.getElementById('article');
+  if(!p){el.innerHTML='<h2>Not found</h2><p class="soft">That piece does not exist yet.</p>';return;}
+  var html='<h2>'+p.title+'</h2><div class="ameta">'+p.cat+' · '+p.date+' · '+p.read+' read</div>';
+  if(p.video){
+    html+='<div class="vid"><iframe src="'+p.video+'" title="'+p.title+'" loading="lazy" '+
+      'allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" '+
+      'allowfullscreen></iframe></div>';
+  }
+  p.body.forEach(function(b){
+    if(b[0]==='video'){html+='<div class="vid"><iframe src="'+b[1]+'" loading="lazy" allowfullscreen></iframe></div>';return;}
+    if(b[0]==='img'){html+='<figure class="fig"><img src="'+b[1]+'" alt="'+(b[2]||'')+'" loading="lazy">'+
+      (b[2]?'<figcaption>'+b[2]+'</figcaption>':'')+'</figure>';return;}
+    html+='<'+b[0]+'>'+b[1]+'</'+b[0]+'>';
+  });
+  if(p.date==='coming soon'){
+    html+='<p class="soft" style="margin-top:2.5rem;font-size:.92rem">This one is still being written. Subscribe and it will find you when it lands.</p>';
+  }
+  el.innerHTML=html;
+});
+document.getElementById('backBtn').addEventListener('click',function(){location.hash='#/blog';});
+
+/* ---------- newsletter ---------- */
+(function(){
+  var ENDPOINT='';  // Buttondown / ConvertKit form endpoint goes here
+  var form=document.getElementById('subForm'),note=document.getElementById('subNote'),input=document.getElementById('subEmail');
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var email=input.value.trim();if(!email)return;
+    if(!ENDPOINT){
+      window.location.href='mailto:zboogher@gmail.com?subject=Subscribe&body='+encodeURIComponent('Add me to the list: '+email);
+      note.textContent='Opening your email client — send it and you are on the list.';return;}
+    note.textContent='Subscribing…';
+    fetch(ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})})
+      .then(function(r){if(!r.ok)throw 0;note.textContent='Done. Check your inbox to confirm.';form.reset();})
+      .catch(function(){note.textContent='That did not go through. Email zboogher@gmail.com and I will add you by hand.';});
+  });
+})();
+
+/* ---------- living fleet ---------- */
+(function(){
+  var cv=document.getElementById('fleet'); if(!cv) return;
+  var ctx=cv.getContext('2d'), nodes=[], pulses=[], raf=null, dpr=Math.min(window.devicePixelRatio||1,2);
+  var COLS, ROWS, GAP=13;
+
+  function css(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+
+  function layout(){
+    var w=cv.clientWidth, h=cv.clientHeight;
+    cv.width=w*dpr; cv.height=h*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
+    COLS=Math.floor(w/GAP); ROWS=Math.floor(h/GAP);
+    nodes=[];
+    for(var y=0;y<ROWS;y++)for(var x=0;x<COLS;x++){
+      nodes.push({x:x*GAP+GAP/2,y:y*GAP+GAP/2,e:0});
+    }
+  }
+
+  function spawn(){
+    if(nodes.length===0) return;
+    var n=nodes[Math.floor(Math.random()*nodes.length)];
+    pulses.push({x:n.x,y:n.y,r:0,max:60+Math.random()*90,life:1});
+  }
+
+  var last=0;
+  function frame(ts){
+    var dt=Math.min((ts-last)/1000,0.05); last=ts;
+    var w=cv.clientWidth,h=cv.clientHeight;
+    ctx.clearRect(0,0,w,h);
+    var base=css('--rule'), acc=css('--fairway');
+
+    for(var i=0;i<pulses.length;i++){
+      var p=pulses[i];
+      p.r+=dt*95; p.life=Math.max(0,1-p.r/p.max);
+      if(p.life<=0){pulses.splice(i,1);i--;}
+    }
+
+    for(var j=0;j<nodes.length;j++){
+      var n=nodes[j], lit=0;
+      for(var k=0;k<pulses.length;k++){
+        var p2=pulses[k];
+        var d=Math.abs(Math.hypot(n.x-p2.x,n.y-p2.y)-p2.r);
+        if(d<9) lit=Math.max(lit,(1-d/9)*p2.life);
+      }
+      n.e += (lit-n.e)*Math.min(1,dt*9);
+      var sz = 1.6 + n.e*1.9;
+      ctx.beginPath();
+      ctx.fillStyle = n.e>0.04 ? acc : base;
+      ctx.globalAlpha = n.e>0.04 ? (0.35+n.e*0.65) : 0.55;
+      ctx.arc(n.x,n.y,sz,0,6.2832);
+      ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    raf=requestAnimationFrame(frame);
+  }
+
+  function start(){
+    layout();
+    if(REDUCE){
+      // static field, no motion
+      var w=cv.clientWidth; ctx.clearRect(0,0,w,cv.clientHeight);
+      ctx.fillStyle=css('--rule'); ctx.globalAlpha=.55;
+      nodes.forEach(function(n){ctx.beginPath();ctx.arc(n.x,n.y,1.6,0,6.2832);ctx.fill();});
+      return;
+    }
+    for(var i=0;i<4;i++) setTimeout(spawn, i*450);
+    var hero=cv.parentElement;
+    hero.style.cursor='crosshair';
+    hero.addEventListener('click',function(ev){
+      var r=cv.getBoundingClientRect();
+      var x=ev.clientX-r.left, y=ev.clientY-r.top;
+      if(x<0||y<0||x>r.width||y>r.height){ spawn(); return; }
+      pulses.push({x:x,y:y,r:0,max:150,life:1});
+    });
+    setInterval(spawn, 1100);
+    last=performance.now();
+    raf=requestAnimationFrame(frame);
+  }
+
+  var rt;
+  window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(layout,180);});
+  setTimeout(start, REDUCE?0:1250);
+})();
+
+/* ---------- contact modal ---------- */
+(function(){
+  var m=document.getElementById('contactModal'),b=document.getElementById('contactBtn');
+  function open(){m.hidden=false;document.body.style.overflow='hidden';}
+  function close(){m.hidden=true;document.body.style.overflow='';}
+  b.addEventListener('click',open);
+  [].forEach.call(document.querySelectorAll('[data-open-contact]'),function(x){x.addEventListener('click',open);});
+  m.addEventListener('click',function(e){if(e.target.hasAttribute('data-close'))close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!m.hidden)close();});
+  [].forEach.call(m.querySelectorAll('.cm-row'),function(a){a.addEventListener('click',close);});
+})();
+
+/* ---------- scroll progress ---------- */
+(function(){
+  var el=document.getElementById('progress');
+  function upd(){
+    var h=document.documentElement.scrollHeight-window.innerHeight;
+    el.style.width=(h>0?(window.scrollY/h)*100:0)+'%';
+  }
+  window.addEventListener('scroll',upd,{passive:true});
+  window.addEventListener('resize',upd);
+  upd();
+})();
+
+/* ---------- scroll reveal ---------- */
+var Reveal=(function(){
+  if(REDUCE||!('IntersectionObserver' in window)) return {scan:function(){}};
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){e.target.classList.add('seen');io.unobserve(e.target);} });
+  },{rootMargin:'0px 0px -8% 0px',threshold:0.06});
+  return {scan:function(){
+    [].forEach.call(document.querySelectorAll('.page.live section'),function(el,i){
+      if(el.dataset.rev)return;
+      el.dataset.rev='1';
+      if(i===0){el.classList.add('seen');return;}
+      el.classList.add('reveal');
+      io.observe(el);
+    });
+  }};
+})();
+
+Router.start();
+</script>
+</body>
+</html>
