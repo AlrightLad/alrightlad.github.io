@@ -94,12 +94,18 @@ code{font-family:"IBM Plex Mono",monospace;font-size:.86em;background:var(--pape
 
 @media (max-width:56rem){
   .burger{display:flex}
-  .nav{position:fixed;top:0;left:0;right:0;bottom:0;z-index:80;
-    background:var(--paper);flex-direction:column;align-items:stretch;justify-content:flex-start;
-    gap:0;padding:5.2rem 1.15rem 2rem;padding-top:calc(5.2rem + env(safe-area-inset-top,0px));
-    transform:translateY(-100%);transition:transform .34s cubic-bezier(.3,.8,.3,1);
-    overflow-y:auto}
-  .nav.open{transform:none}
+  /* .bar carries backdrop-filter, which makes it the containing block for
+     position:fixed children — so the panel is positioned against .bar and
+     hidden with visibility, not with a transform that assumes the viewport. */
+  .nav{position:absolute;top:100%;left:0;right:0;z-index:80;
+    height:100dvh;max-height:100dvh;
+    background:var(--paper);border-top:1px solid var(--rule);
+    flex-direction:column;align-items:stretch;justify-content:flex-start;
+    gap:0;padding:1.5rem 1.15rem 6rem;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+    visibility:hidden;opacity:0;transform:translateY(-10px);
+    transition:opacity .26s ease,transform .3s cubic-bezier(.3,.8,.3,1),visibility 0s .3s}
+  .nav.open{visibility:visible;opacity:1;transform:none;transition-delay:0s,0s,0s}
   .nav a{font-size:1.45rem;font-family:Fraunces,Georgia,serif;font-weight:600;letter-spacing:-.02em;
     padding:.75rem 0;border-bottom:1px solid var(--rule);border-radius:0;color:var(--ink)}
   .nav a:hover{background:none}
