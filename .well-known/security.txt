@@ -1,0 +1,7 @@
+Contact: mailto:zboogher@gmail.com
+Expires: 2027-10-03T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://alrightlad.github.io/.well-known/security.txt
+
+# This site is a static page with no backend, no forms that submit anywhere,
+# and no user data. If you find something anyway, I would genuinely like to know.

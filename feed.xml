@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Zach Boogher — Blog</title>
+  <link>https://alrightlad.github.io/#/blog</link>
+  <atom:link href="https://alrightlad.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+  <description>Infrastructure automation, the homelab, and the occasional round of golf.</description>
+  <language>en-us</language>
+  <managingEditor>zboogher@gmail.com (Zach Boogher)</managingEditor>
+
+  <item>
+    <title>A 9.3 landed in a framework I ship on. Here is what I did about it.</title>
+    <link>https://alrightlad.github.io/#/post/capacitor-cve</link>
+    <guid isPermaLink="true">https://alrightlad.github.io/#/post/capacitor-cve</guid>
+    <category>Security</category>
+    <pubDate>Thu, 02 Oct 2026 12:00:00 -0400</pubDate>
+    <description>CVE-2026-103922 hits Capacitor, which my golf app is built on. I was on an affected version. What the flaw is, how I checked, and what it takes to actually protect the people using it.</description>
+  </item>
+
+  <item>
+    <title>Parbaughs Golf Club: the app I wrote so nobody has to argue about the math</title>
+    <link>https://alrightlad.github.io/#/post/parbaughs</link>
+    <guid isPermaLink="true">https://alrightlad.github.io/#/post/parbaughs</guid>
+    <category>Frontend</category>
+    <pubDate>Thu, 02 Oct 2026 11:00:00 -0400</pubDate>
+    <description>It started as one HTML file. It is now a real build with handicaps to the USGA standard, live leaderboards and a native app on a phone. Most of what I learned was not about golf.</description>
+  </item>
+
+  <item>
+    <title>The accounts nobody was counting</title>
+    <link>https://alrightlad.github.io/#/post/stale-access</link>
+    <guid isPermaLink="true">https://alrightlad.github.io/#/post/stale-access</guid>
+    <category>Infrastructure</category>
+    <pubDate>Thu, 02 Oct 2026 10:00:00 -0400</pubDate>
+    <description>Our RMM knows every account that exists. It has no good way to show you which ones have stopped being used. Across a few hundred client organizations, that gap was the whole problem.</description>
+  </item>
+
+  <item>
+    <title>Two hundred and sixty-five appliances, by hand</title>
+    <link>https://alrightlad.github.io/#/post/veeam-fleet</link>
+    <guid isPermaLink="true">https://alrightlad.github.io/#/post/veeam-fleet</guid>
+    <category>Backup and DR</category>
+    <pubDate>Thu, 02 Oct 2026 09:00:00 -0400</pubDate>
+    <description>Nobody said it could not be done. They said it was becoming an enormous amount of work and the end of it was hard to see. That is a different problem, and a more interesting one.</description>
+  </item>
+
+  <item>
+    <title>Lancaster, a caddie, and the first place that is actually mine</title>
+    <link>https://alrightlad.github.io/#/post/whats-next</link>
+    <guid isPermaLink="true">https://alrightlad.github.io/#/post/whats-next</guid>
+    <category>Personal</category>
+    <pubDate>Thu, 02 Oct 2026 08:00:00 -0400</pubDate>
+    <description>Somebody asked what I was looking forward to and I did not have an answer ready, which felt like a problem worth fixing. Not a technical post.</description>
+  </item>
+
+</channel>
+</rss>
